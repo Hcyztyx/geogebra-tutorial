@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoGebra 互动教学平台 - 从零开始学 GeoGebra</title>
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="互动式 GeoGebra 学习平台，通过实践任务逐步掌握 GeoGebra 的使用方法">
+  <meta name="theme-color" content="#2c5aa0">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA7AAAAOwBeShxvQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANCSURBVFiF7ZY9TsMwGIafOAWJgQuwMLFwANf//yccgIGBxMbEgMQJGJgYkPgRJCS2Vq1T/JGd2E5S0vUlTpz4fd7X3+dgGIZhGIZhGIZhGIZhGIZhGIZhGP+ACsR78B4f8Q5v8Aov8RyP8RCP8AAP0Kd9dNE+2qgPbdSHJurDd9RHG/Whe3TRPjpBH7qoD13Uhx7qQw/1oY/60Ed96KM+9FEfBqgPQ9SHIerDEPVhiPowQn0YoT6MUR/GqA8T1IcJ6sME9WGK+jBFfZiiPkxRH2aoDzPUhznqwxz1YYH6sEB9WKE+LFEflqgPK9SHNerDGvVhg/qwRX3Yoj7sUB/2qA8H1IcD6sMR9eGI+nBCfTihPpxRH86oDxfUhwvqwxX14Yr6cEN9uKM+3FEfHqgPT9SHJ+rDC/XhjfrwQX34oj78UB/+qA8D1IcR6sMY9WGC+jBFfZiiPkxRH+aoD3PUhwXqwxL1YYX6sER9WKE+rFEfNqgPW9SHHerDHvVhj/pwQH04oj6cUB/OqA9n1IcL6sMV9eGG+nBHfXigPjxRH56oDy/Why/qww/14Y/6MEB9GKE+jFEfJqgPU9SHKerDVPVhgfqwQn1Yoj6sUB/WqA9b1Icd6sMe9eGA+nBEfTihPpxRH86oDxfUhyvqwxX14Yb6cEd9eKA+PFEfnqgPL9SHN+rDB/Xhj/rwR30YoD6MUB/GqA8T1Icp6sMU9WGK+jBDfZijPixQH5aoDyvUhxXqwxr1YYv6sEN92KM+HFAfjqgPJ9SHM+rDGfXhgvpwRX24oj7cUB/uqA8P1Icn6sMT9eGF+vBGffigPvxRH/6oDwPUhxHqwxj1YYL6MEV9mKI+TFEfZqgPc9SHBerDEvVhhfqwQn1Yoz5sUR92qA971IcD6sMR9eGE+nBGfTijPlxQH66oD1fUhxvqwx314YH68ER9eKI+vFAf3qgPH9SHP+rDH/XhgPowQH0YoT6MUR8mqA9T1Icp6sMU9WGG+jBHezihPqxQH9aoD1vUhx3qwx714YD6cER9OKE+nFEfzqgPF9SHK+rDFfXhhvpwR314oD48UR+eqA8v1Ic36sMH9eGP+vBHfRigPoxQH8aoDxPUhynqwxT1YYr6MEN9mKM+LFAflqgPK9SHFfr/BvVhg/qwQX3Yoj7sUB/2qA8H1Icj6sMJ9eGM+nBGfbigPlxRH66oDzfUhzvqwwP14Yn68ER9eKE+vFEfPqgPf9SHP+rDAPVhhPowRn2YoD5MUR+mqA9T1IcZ6sMc9WGB+rBEfVihPqxRH7aoDzvUhz3qwwH14Yj6cEJ9OKM+nFEfLqgPV9SHK+rDDfXhjvrwQH14oj48UR9eqA9v1IcP6sMf9eGP+jBAfRihPoxRHyaoD1PUhynqwxT1YYb6MEf9H8MwDMMwDMMwDMMwDMMwDMMwDMMw/gJ/ADSqLX3F211AAAAAAElFTkSuQmCC">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <h1>📐 GeoGebra 互动教学平台</h1>
+      <p>通过实践任务，循序渐进地掌握 GeoGebra 的使用方法</p>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Left Sidebar - Lesson Navigation -->
+      <aside class="sidebar">
+        <h2>📚 课程列表</h2>
+        <ul class="lesson-list" id="lesson-list">
+          <li class="lesson-item">正在加载课程...</li>
+        </ul>
+        
+        <!-- Progress Stats -->
+        <div class="stats-panel">
+          <h3 style="margin-bottom: 15px; color: var(--primary-color);">📊 学习进度</h3>
+          <div class="stat-item">
+            <span class="stat-label">已完成课程</span>
+            <span class="stat-value" id="stat-completed-lessons">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">已完成任务</span>
+            <span class="stat-value" id="stat-completed-tasks">0 / <span id="stat-total-tasks">0</span></span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">总得分</span>
+            <span class="stat-value" id="stat-total-score">0</span>
+          </div>
+          
+          <div class="progress-container" style="margin-top: 20px;">
+            <div class="progress-bar">
+              <div class="progress-fill" id="progress-fill" style="width: 0%;">0%</div>
+            </div>
+          </div>
+          
+          <button class="btn btn-warning" id="reset-progress" style="width: 100%; margin-top: 15px; font-size: 0.9em;">
+            🔄 重置进度
+          </button>
+        </div>
+      </aside>
+
+      <!-- Center - GeoGebra Canvas -->
+      <main class="geogebra-area">
+        <div id="geogebra-container" style="display:flex;align-items:center;justify-content:center;height:600px;color:#666;">
+          <div>
+            <p style="font-size: 1.2em; margin-bottom: 10px;">👈 从左侧选择一个课程开始学习</p>
+            <p style="font-size: 0.9em; color: #999;">GeoGebra 画布将在选择课程后加载</p>
+          </div>
+        </div>
+      </main>
+
+      <!-- Right Sidebar - Task Panel -->
+      <aside class="task-panel">
+        <div class="task-number" id="task-number">未选择课程</div>
+        <h2 id="task-title">选择课程开始</h2>
+        
+        <div class="task-instruction" id="task-instruction">
+          从左侧课程列表中选择一个课程，开始你的 GeoGebra 学习之旅！
+        </div>
+        
+        <!-- Attempt Counter -->
+        <div class="attempt-counter" id="attempt-counter" style="display: none;">
+          ⚠️ 当前尝试次数：0 | 使用提示会降低得分
+        </div>
+        
+        <!-- Feedback -->
+        <div id="feedback"></div>
+        
+        <!-- Hint Section -->
+        <div class="hint-section" id="hint-section">
+          <h3>💡 需要提示吗？</h3>
+          <p style="color: #666; font-size: 0.9em;">完成每个任务后，你可以获取提示来帮助自己</p>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div style="margin-top: 25px;">
+          <button class="btn btn-primary" id="check-btn" disabled style="width: 100%;">
+            ✓ 检查答案
+          </button>
+        </div>
+        
+        <!-- Task Navigation -->
+        <div class="task-navigation" id="task-navigation">
+          <!-- Dynamically populated -->
+        </div>
+        
+        <!-- Instructions -->
+        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+          <h3 style="color: var(--primary-color); margin-bottom: 10px;">📖 使用说明</h3>
+          <ol style="padding-left: 20px; line-height: 1.8; color: #555;">
+            <li>从左侧选择一个课程</li>
+            <li>阅读右侧的任务说明</li>
+            <li>在 GeoGebra 画布中完成任务</li>
+            <li>点击「检查答案」验证结果</li>
+            <li>遇到困难可以使用提示功能</li>
+            <li>完成后进入下一题</li>
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Completion Modal -->
+  <div class="modal" id="completion-modal">
+    <div class="modal-content">
+      <h2 id="completion-title">🎉 课程完成！</h2>
+      <p id="completion-score" style="font-size: 1.5em; color: var(--primary-color); font-weight: bold;">
+        得分：0 / 0 (0%)
+      </p>
+      <p id="completion-message">太棒了！你已经掌握了本课程的内容。</p>
+      <button class="btn btn-primary" id="close-modal">
+        ✓ 完成
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="js/app.js"></script>
+  
+  <!-- Service Worker for Offline Support -->
+  <script>
+    // 注册 Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful:', registration.scope);
+          })
+          .catch(err => {
+            console.log('ServiceWorker registration failed:', err);
+          });
+      });
+    }
+    
+    // 离线检测
+    window.addEventListener('online', () => {
+      console.log('网络已连接');
+    });
+    
+    window.addEventListener('offline', () => {
+      console.log('网络已断开 - 离线模式可用');
+      alert('⚠️ 您已离线，已加载缓存内容。GeoGebra 画布需要联网才能使用。');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+{
+  "lessons": [
+    {
+      "id": "lesson-1",
+      "title": "基础入门 - 点的创建",
+      "description": "学习如何在 GeoGebra 中创建点",
+      "difficulty": "beginner",
+      "tasks": [
+        {
+          "id": "task-1-1",
+          "title": "创建第一个点",
+          "instruction": "使用工具栏中的「点」工具，在绘图区点击创建一个点 A",
+          "hints": [
+            "在左侧工具栏中找到「点」工具（图标是一个小圆点）",
+            "点击「点」工具后，在空白区域单击鼠标左键",
+            "GeoGebra 会自动将第一个点命名为 A"
+          ],
+          "validation": {
+            "type": "object-exists",
+            "objectType": "point",
+            "objectName": "A",
+            "message": "✓ 正确！你已成功创建点 A"
+          },
+          "points": 10
+        },
+        {
+          "id": "task-1-2",
+          "title": "创建指定坐标的点",
+          "instruction": "在输入框中输入坐标 (3, 4) 创建点 B",
+          "hints": [
+            "在底部的输入框中可以直接输入坐标",
+            "格式为：B = (3, 4)",
+            "按 Enter 键确认输入"
+          ],
+          "validation": {
+            "type": "point-coordinates",
+            "objectName": "B",
+            "expectedX": 3,
+            "expectedY": 4,
+            "tolerance": 0.1,
+            "message": "✓ 完美！点 B 已创建在正确位置"
+          },
+          "points": 15
+        },
+        {
+          "id": "task-1-3",
+          "title": "创建多个点",
+          "instruction": "创建三个点：C(1, 2)、D(5, 2)、E(3, 6)",
+          "hints": [
+            "可以逐个输入：C = (1, 2)，然后按 Enter",
+            "也可以一次性输入多个点，用逗号分隔",
+            "检查代数区是否显示了所有三个点"
+          ],
+          "validation": {
+            "type": "multiple-points",
+            "points": [
+              {"name": "C", "x": 1, "y": 2},
+              {"name": "D", "x": 5, "y": 2},
+              {"name": "E", "x": 3, "y": 6}
+            ],
+            "tolerance": 0.1,
+            "message": "✓ 太棒了！三个点都已正确创建"
+          },
+          "points": 20
+        }
+      ]
+    },
+    {
+      "id": "lesson-2",
+      "title": "线段与直线",
+      "description": "学习创建线段和直线",
+      "difficulty": "beginner",
+      "tasks": [
+        {
+          "id": "task-2-1",
+          "title": "连接两点创建线段",
+          "instruction": "使用「线段」工具连接点 A(0,0) 和点 B(4,3) 创建线段 AB",
+          "hints": [
+            "首先创建点 A = (0, 0) 和点 B = (4, 3)",
+            "选择「线段」工具（图标是一条线段）",
+            "依次点击点 A 和点 B"
+          ],
+          "validation": {
+            "type": "segment-exists",
+            "segmentName": "AB",
+            "message": "✓ 正确！线段 AB 已创建"
+          },
+          "points": 15
+        },
+        {
+          "id": "task-2-2",
+          "title": "创建直线",
+          "instruction": "通过点 C(1,1) 和点 D(5,5) 创建一条直线",
+          "hints": [
+            "使用「直线」工具（与线段工具不同，直线会无限延伸）",
+            "或者在输入框输入：直线 (C, D)",
+            "直线没有端点，会向两个方向无限延伸"
+          ],
+          "validation": {
+            "type": "line-exists",
+            "lineName": "CD",
+            "message": "✓ 很好！直线 CD 已创建"
+          },
+          "points": 15
+        },
+        {
+          "id": "task-2-3",
+          "title": "创建垂直线",
+          "instruction": "过点 E(2,3) 创建一条垂直于直线 CD 的垂线",
+          "hints": [
+            "使用「垂线」工具",
+            "先选择点 E，然后选择直线 CD",
+            "或者输入：垂线 (E, CD)"
+          ],
+          "validation": {
+            "type": "perpendicular-line",
+            "pointName": "E",
+            "referenceLine": "CD",
+            "message": "✓ 完美！垂线已创建"
+          },
+          "points": 25
+        }
+      ]
+    },
+    {
+      "id": "lesson-3",
+      "title": "圆与圆弧",
+      "description": "学习创建圆和圆弧",
+      "difficulty": "intermediate",
+      "tasks": [
+        {
+          "id": "task-3-1",
+          "title": "创建圆（圆心和半径）",
+          "instruction": "以点 O(0,0) 为圆心，创建半径为 3 的圆",
+          "hints": [
+            "使用「圆（圆心与半径）」工具",
+            "先点击圆心 O，然后输入半径 3",
+            "或者输入：圆 (O, 3)"
+          ],
+          "validation": {
+            "type": "circle-radius",
+            "centerName": "O",
+            "expectedRadius": 3,
+            "tolerance": 0.1,
+            "message": "✓ 正确！圆已创建"
+          },
+          "points": 20
+        },
+        {
+          "id": "task-3-2",
+          "title": "创建圆（圆心和点）",
+          "instruction": "创建经过点 A(4,0) 且圆心在 O(0,0) 的圆",
+          "hints": [
+            "使用「圆（圆心与点）」工具",
+            "先点击圆心 O，然后点击点 A",
+            "圆的半径会自动设置为 OA 的距离"
+          ],
+          "validation": {
+            "type": "circle-through-point",
+            "centerName": "O",
+            "pointOnCircle": "A",
+            "message": "✓ 很好！圆经过点 A"
+          },
+          "points": 20
+        },
+        {
+          "id": "task-3-3",
+          "title": "创建圆弧",
+          "instruction": "在圆上创建从点 A 到点 B 的圆弧",
+          "hints": [
+            "使用「圆弧」工具",
+            "依次选择圆心、起点 A、终点 B",
+            "圆弧是圆的一部分"
+          ],
+          "validation": {
+            "type": "arc-exists",
+            "message": "✓ 完美！圆弧已创建"
+          },
+          "points": 25
+        }
+      ]
+    },
+    {
+      "id": "lesson-4",
+      "title": "函数图像",
+      "description": "学习绘制函数图像",
+      "difficulty": "intermediate",
+      "tasks": [
+        {
+          "id": "task-4-1",
+          "title": "绘制线性函数",
+          "instruction": "在输入框中输入 f(x) = 2x + 1 绘制函数图像",
+          "hints": [
+            "直接在输入框中输入函数表达式",
+            "格式：f(x) = 2x + 1",
+            "按 Enter 键后，函数图像会自动绘制"
+          ],
+          "validation": {
+            "type": "function-exists",
+            "functionName": "f",
+            "expectedSlope": 2,
+            "expectedIntercept": 1,
+            "message": "✓ 正确！线性函数已绘制"
+          },
+          "points": 20
+        },
+        {
+          "id": "task-4-2",
+          "title": "绘制二次函数",
+          "instruction": "绘制二次函数 g(x) = x² - 4",
+          "hints": [
+            "输入：g(x) = x^2 - 4",
+            "或者：g(x) = x² - 4（GeoGebra 支持 Unicode）",
+            "这是一个开口向上的抛物线"
+          ],
+          "validation": {
+            "type": "function-exists",
+            "functionName": "g",
+            "functionType": "quadratic",
+            "message": "✓ 很好！二次函数已绘制"
+          },
+          "points": 25
+        },
+        {
+          "id": "task-4-3",
+          "title": "使用滑块创建动态函数",
+          "instruction": "创建滑块 a，然后绘制函数 h(x) = ax，观察 a 变化时函数图像的变化",
+          "hints": [
+            "使用「滑块」工具创建一个数值滑块",
+            "将滑块命名为 a",
+            "然后输入：h(x) = a * x",
+            "拖动滑块观察函数图像的变化"
+          ],
+          "validation": {
+            "type": "slider-function",
+            "sliderName": "a",
+            "functionName": "h",
+            "message": "✓ 太棒了！动态函数已创建"
+          },
+          "points": 30
+        }
+      ]
+    },
+    {
+      "id": "lesson-5",
+      "title": "几何变换",
+      "description": "学习平移、旋转、对称等变换",
+      "difficulty": "advanced",
+      "tasks": [
+        {
+          "id": "task-5-1",
+          "title": "平移变换",
+          "instruction": "创建三角形 ABC，然后将其沿向量 (3, 2) 平移",
+          "hints": [
+            "先创建三个点 A、B、C 形成三角形",
+            "使用「向量」工具创建向量 (3, 2)",
+            "使用「平移」工具，选择三角形和向量"
+          ],
+          "validation": {
+            "type": "translation",
+            "message": "✓ 正确！平移已完成"
+          },
+          "points": 30
+        },
+        {
+          "id": "task-5-2",
+          "title": "旋转变换",
+          "instruction": "将三角形绕点 O 逆时针旋转 90 度",
+          "hints": [
+            "使用「绕点旋转」工具",
+            "选择三角形，然后选择旋转中心 O",
+            "输入旋转角度 90°"
+          ],
+          "validation": {
+            "type": "rotation",
+            "angle": 90,
+            "message": "✓ 很好！旋转已完成"
+          },
+          "points": 30
+        },
+        {
+          "id": "task-5-3",
+          "title": "轴对称变换",
+          "instruction": "创建三角形关于直线 l 的轴对称图形",
+          "hints": [
+            "使用「轴对称」工具",
+            "先选择三角形，然后选择对称轴 l",
+            "对称图形会自动创建"
+          ],
+          "validation": {
+            "type": "reflection",
+            "message": "✓ 完美！轴对称已完成"
+          },
+          "points": 30
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "passingScore": 60,
+    "showHintsAfterAttempts": 2,
+    "maxAttempts": 5,
+    "geoGebraVersion": "6"
+  }
+}
