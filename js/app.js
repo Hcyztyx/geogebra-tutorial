@@ -166,8 +166,7 @@ class GeoGebraTutorial {
       appletOnLoad: (api) => {
         this.applet = api;
         console.log('GeoGebra applet loaded');
-        // 延迟初始化，避免弹窗错误
-        setTimeout(() => this.resetGeoGebra(), 500);
+        // 不执行任何清空操作，让 GeoGebra 使用默认状态
       },
       scaleContainerRatio: true,
       allowStyleBar: false,
@@ -176,7 +175,8 @@ class GeoGebraTutorial {
       showResetIcon: false,
       showFullscreenButton: true,
       useBrowserForJS: true,
-      showErrorDialog: false
+      showErrorDialog: false,
+      errorDialogHandler: () => {}
     };
 
     const script = document.createElement('script');
@@ -190,14 +190,10 @@ class GeoGebraTutorial {
 
   // 重置 GeoGebra 画布
   resetGeoGebra() {
+    // 暂时不执行清空操作，避免弹窗错误
+    // 让用户手动使用 GeoGebra 的重置按钮
     if (this.applet) {
-      try {
-        // 使用更安全的方式清空画布
-        this.applet.evalCommand('DeleteAll()');
-        // 不直接调用 setCoordSystem，避免弹窗
-      } catch (err) {
-        console.log('GeoGebra reset:', err.message);
-      }
+      console.log('GeoGebra ready for task');
     }
   }
 
