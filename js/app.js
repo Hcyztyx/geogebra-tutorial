@@ -165,11 +165,15 @@ class GeoGebraTutorial {
   // 重置 GeoGebra 画布
   resetGeoGebra() {
     if (this.applet) {
-      this.applet.evalCommand('清空绘图区');
-      this.applet.evalCommand('deleteall');
-      
-      // 设置坐标轴范围
-      this.applet.evalCommand('设置坐标轴范围 (-10, -10, 10, 10)');
+      try {
+        // 使用英文命令避免兼容性问题
+        this.applet.evalCommand('DeleteAll()');
+        
+        // 设置坐标轴范围
+        this.applet.setCoordSystem(-10, -10, 10, 10);
+      } catch (err) {
+        console.log('GeoGebra reset:', err.message);
+      }
     }
   }
 
