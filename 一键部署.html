@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vercel 部署 - 一键完成</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #0099FF;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        .status-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .status-card.success {
+            border-color: #4CAF50;
+            background: #f1f8f4;
+        }
+        .status-card.warning {
+            border-color: #FF9800;
+            background: #fff8f0;
+        }
+        .status-icon {
+            font-size: 2em;
+            margin-right: 10px;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #0099FF 0%, #0066CC 100%);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin: 20px 0;
+            transition: all 0.3s;
+            text-align: center;
+            display: block;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 153, 255, 0.4);
+        }
+        .btn-large {
+            font-size: 1.4em;
+            padding: 22px 50px;
+        }
+        .steps {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+        }
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .step-desc {
+            color: #666;
+            line-height: 1.6;
+        }
+        .checklist {
+            list-style: none;
+            margin: 20px 0;
+        }
+        .checklist li {
+            padding: 10px 0;
+            padding-left: 35px;
+            position: relative;
+        }
+        .checklist li:before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #FF9800;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .final-url {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        .final-url h3 {
+            margin-bottom: 15px;
+        }
+        .final-url .url {
+            font-size: 1.5em;
+            font-weight: bold;
+            background: rgba(255,255,255,0.2);
+            padding: 15px 30px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Vercel 部署向导</h1>
+        <p class="subtitle">GeoGebra 互动教学平台 - 公网部署</p>
+
+        <!-- 状态检查 -->
+        <div class="status-card success">
+            <div><span class="status-icon">✅</span><strong>GitHub 仓库已就绪</strong></div>
+            <p style="margin-top: 10px; color: #666;">
+                仓库地址：<a href="https://github.com/Hcyztyx/geogebra-tutorial" target="_blank">https://github.com/Hcyztyx/geogebra-tutorial</a>
+            </p>
+        </div>
+
+        <div class="status-card warning">
+            <div><span class="status-icon">⏳</span><strong>Vercel 部署待完成</strong></div>
+            <p style="margin-top: 10px; color: #666;">
+                需要在 Vercel 官网连接 GitHub 仓库，完成部署
+            </p>
+        </div>
+
+        <!-- 一键部署按钮 -->
+        <a href="https://vercel.com/new/clone?repository-url=https://github.com/Hcyztyx/geogebra-tutorial" 
+           class="btn btn-large" 
+           target="_blank">
+            🚀 点击这里一键部署到 Vercel
+        </a>
+
+        <!-- 详细步骤 -->
+        <div class="steps">
+            <h2 style="margin-bottom: 25px; color: #333;">📋 详细部署步骤</h2>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">点击上方的部署按钮</div>
+                    <div class="step-desc">点击蓝色按钮，会自动跳转到 Vercel 并导入你的 GitHub 仓库</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">登录 Vercel</div>
+                    <div class="step-desc">使用 GitHub 账号登录（选择 "Continue with GitHub"）</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">确认项目配置</div>
+                    <div class="step-desc">保持默认设置，无需修改任何参数</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <div class="step-title">点击 Deploy</div>
+                    <div class="step-desc">等待 30-60 秒，部署完成后会显示 "Congratulations!"</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <div class="step-title">访问你的网站</div>
+                    <div class="step-desc">点击 "Visit" 按钮访问部署好的网站</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 最终网址 -->
+        <div class="final-url">
+            <h3>🎉 部署完成后，你的网站网址将是：</h3>
+            <div class="url">https://geogebra-tutorial-xxx.vercel.app</div>
+            <p style="margin-top: 15px; opacity: 0.9;">（xxx 是 Vercel 自动分配的唯一标识）</p>
+        </div>
+
+        <!-- 检查清单 -->
+        <div class="warning-box">
+            <h3 style="margin-bottom: 15px; color: #856404;">⚠️ 如果遇到问题</h3>
+            <ul class="checklist" style="color: #856404;">
+                <li>确保已用 GitHub 账号登录 Vercel</li>
+                <li>如果找不到仓库，在 GitHub 授权 Vercel 访问</li>
+                <li>部署失败时查看 Vercel 的部署日志</li>
+                <li>页面空白时等待 1-2 分钟（CDN 传播）</li>
+            </ul>
+        </div>
+
+        <!-- 完成后的操作 -->
+        <div style="text-align: center; margin-top: 40px; padding: 30px; background: #f8f9fa; border-radius: 15px;">
+            <h3 style="color: #333; margin-bottom: 15px;">✅ 部署完成后</h3>
+            <p style="color: #666; margin-bottom: 20px;">
+                把 Vercel 网址发给我，我会立即测试所有功能并截图给你看！
+            </p>
+        </div>
+    </div>
+</body>
+</html>
