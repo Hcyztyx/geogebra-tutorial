@@ -5,6 +5,7 @@
       "title": "基础入门 - 点的创建",
       "description": "学习如何在 GeoGebra 中创建点",
       "difficulty": "beginner",
+      "stars": 0,
       "tasks": [
         {
           "id": "task-1-1",
@@ -21,7 +22,8 @@
             "objectName": "A",
             "message": "✓ 正确！你已成功创建点 A"
           },
-          "points": 10
+          "points": 10,
+          "maxAttempts": 5
         },
         {
           "id": "task-1-2",
@@ -40,7 +42,8 @@
             "tolerance": 0.1,
             "message": "✓ 完美！点 B 已创建在正确位置"
           },
-          "points": 15
+          "points": 15,
+          "maxAttempts": 5
         },
         {
           "id": "task-1-3",
@@ -61,7 +64,36 @@
             "tolerance": 0.1,
             "message": "✓ 太棒了！三个点都已正确创建"
           },
-          "points": 20
+          "points": 20,
+          "maxAttempts": 5
+        },
+        {
+          "id": "task-1-4",
+          "title": "挑战：创建对称点阵",
+          "instruction": "创建 9 个点形成 3x3 的方阵，点坐标分别为：(1,1), (1,2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3)",
+          "hints": [
+            "这是一个 3x3 的方阵，x 和 y 坐标都是 1, 2, 3",
+            "可以逐个输入，也可以用序列命令",
+            "高级技巧：Sequence(Sequence((i,j), i, 1, 3), j, 1, 3)"
+          ],
+          "validation": {
+            "type": "multiple-points",
+            "points": [
+              {"name": "P1", "x": 1, "y": 1},
+              {"name": "P2", "x": 1, "y": 2},
+              {"name": "P3", "x": 1, "y": 3},
+              {"name": "P4", "x": 2, "y": 1},
+              {"name": "P5", "x": 2, "y": 2},
+              {"name": "P6", "x": 2, "y": 3},
+              {"name": "P7", "x": 3, "y": 1},
+              {"name": "P8", "x": 3, "y": 2},
+              {"name": "P9", "x": 3, "y": 3}
+            ],
+            "tolerance": 0.1,
+            "message": "🌟 挑战完成！你创建了完美的点阵"
+          },
+          "points": 50,
+          "maxAttempts": 10
         }
       ]
     },
@@ -70,6 +102,7 @@
       "title": "线段与直线",
       "description": "学习创建线段和直线",
       "difficulty": "beginner",
+      "stars": 0,
       "tasks": [
         {
           "id": "task-2-1",
@@ -85,7 +118,8 @@
             "segmentName": "AB",
             "message": "✓ 正确！线段 AB 已创建"
           },
-          "points": 15
+          "points": 15,
+          "maxAttempts": 5
         },
         {
           "id": "task-2-2",
@@ -101,7 +135,8 @@
             "lineName": "CD",
             "message": "✓ 很好！直线 CD 已创建"
           },
-          "points": 15
+          "points": 15,
+          "maxAttempts": 5
         },
         {
           "id": "task-2-3",
@@ -118,7 +153,27 @@
             "referenceLine": "CD",
             "message": "✓ 完美！垂线已创建"
           },
-          "points": 25
+          "points": 25,
+          "maxAttempts": 5
+        },
+        {
+          "id": "task-2-4",
+          "title": "挑战：绘制几何图形",
+          "instruction": "创建一个正方形 ABCD，边长为 4，A 点在原点 (0,0)",
+          "hints": [
+            "正方形四个顶点：A(0,0), B(4,0), C(4,4), D(0,4)",
+            "创建四个点后，用线段连接 AB, BC, CD, DA",
+            "验证：四条边长度应该相等"
+          ],
+          "validation": {
+            "type": "square",
+            "points": ["A", "B", "C", "D"],
+            "sideLength": 4,
+            "tolerance": 0.2,
+            "message": "🌟 挑战完成！正方形绘制完美"
+          },
+          "points": 60,
+          "maxAttempts": 10
         }
       ]
     },
@@ -127,6 +182,7 @@
       "title": "圆与圆弧",
       "description": "学习创建圆和圆弧",
       "difficulty": "intermediate",
+      "stars": 0,
       "tasks": [
         {
           "id": "task-3-1",
@@ -144,7 +200,8 @@
             "tolerance": 0.1,
             "message": "✓ 正确！圆已创建"
           },
-          "points": 20
+          "points": 20,
+          "maxAttempts": 5
         },
         {
           "id": "task-3-2",
@@ -161,12 +218,13 @@
             "pointOnCircle": "A",
             "message": "✓ 很好！圆经过点 A"
           },
-          "points": 20
+          "points": 20,
+          "maxAttempts": 5
         },
         {
           "id": "task-3-3",
           "title": "创建圆弧",
-          "instruction": "在圆上创建从点 A 到点 B 的圆弧",
+          "instruction": "在圆上创建从点 A 到点 B 的圆弧（A 在 (3,0)，B 在 (0,3)）",
           "hints": [
             "使用「圆弧」工具",
             "依次选择圆心、起点 A、终点 B",
@@ -176,7 +234,27 @@
             "type": "arc-exists",
             "message": "✓ 完美！圆弧已创建"
           },
-          "points": 25
+          "points": 25,
+          "maxAttempts": 5
+        },
+        {
+          "id": "task-3-4",
+          "title": "挑战：奥运五环",
+          "instruction": "创建奥运五环图案：5 个圆，半径都是 2，圆心分别为 (0,0), (4.5,0), (9,0), (2.25,-2), (6.75,-2)",
+          "hints": [
+            "上排 3 个圆，下排 2 个圆",
+            "颜色可以不同（蓝、黄、黑、绿、红）",
+            "圆之间应该有重叠"
+          ],
+          "validation": {
+            "type": "five-circles",
+            "radius": 2,
+            "centers": [[0,0], [4.5,0], [9,0], [2.25,-2], [6.75,-2]],
+            "tolerance": 0.2,
+            "message": "🌟🌟 奥运五环完成！太棒了！"
+          },
+          "points": 100,
+          "maxAttempts": 15
         }
       ]
     },
@@ -185,6 +263,7 @@
       "title": "函数图像",
       "description": "学习绘制函数图像",
       "difficulty": "intermediate",
+      "stars": 0,
       "tasks": [
         {
           "id": "task-4-1",
@@ -202,7 +281,8 @@
             "expectedIntercept": 1,
             "message": "✓ 正确！线性函数已绘制"
           },
-          "points": 20
+          "points": 20,
+          "maxAttempts": 5
         },
         {
           "id": "task-4-2",
@@ -219,7 +299,8 @@
             "functionType": "quadratic",
             "message": "✓ 很好！二次函数已绘制"
           },
-          "points": 25
+          "points": 25,
+          "maxAttempts": 5
         },
         {
           "id": "task-4-3",
@@ -237,7 +318,25 @@
             "functionName": "h",
             "message": "✓ 太棒了！动态函数已创建"
           },
-          "points": 30
+          "points": 30,
+          "maxAttempts": 5
+        },
+        {
+          "id": "task-4-4",
+          "title": "挑战：函数艺术",
+          "instruction": "绘制以下函数组合创建艺术图案：\n1. y = sin(x)\n2. y = cos(x)\n3. y = 0.5*sin(2x)\n4. y = 0.5*cos(2x)",
+          "hints": [
+            "逐个输入四个函数",
+            "观察它们形成的波浪图案",
+            "可以尝试改变颜色区分不同函数"
+          ],
+          "validation": {
+            "type": "multiple-functions",
+            "functions": ["sin(x)", "cos(x)", "0.5*sin(2x)", "0.5*cos(2x)"],
+            "message": "🌟🌟 函数艺术完成！图案很美吧？"
+          },
+          "points": 80,
+          "maxAttempts": 10
         }
       ]
     },
@@ -246,6 +345,7 @@
       "title": "几何变换",
       "description": "学习平移、旋转、对称等变换",
       "difficulty": "advanced",
+      "stars": 0,
       "tasks": [
         {
           "id": "task-5-1",
@@ -260,7 +360,8 @@
             "type": "translation",
             "message": "✓ 正确！平移已完成"
           },
-          "points": 30
+          "points": 30,
+          "maxAttempts": 5
         },
         {
           "id": "task-5-2",
@@ -276,7 +377,8 @@
             "angle": 90,
             "message": "✓ 很好！旋转已完成"
           },
-          "points": 30
+          "points": 30,
+          "maxAttempts": 5
         },
         {
           "id": "task-5-3",
@@ -291,7 +393,116 @@
             "type": "reflection",
             "message": "✓ 完美！轴对称已完成"
           },
-          "points": 30
+          "points": 30,
+          "maxAttempts": 5
+        },
+        {
+          "id": "task-5-4",
+          "title": "终极挑战：万花筒",
+          "instruction": "创建一个基本图形（如三角形），然后：\n1. 绕原点旋转 60°\n2. 再旋转 60°（共 120°）\n3. 继续旋转直到形成完整的六边形对称图案\n4. 对每个图形做轴对称",
+          "hints": [
+            "基本图形可以是任意多边形",
+            "每次旋转 60°，共旋转 6 次形成 360°",
+            "使用不同的颜色区分每个图形",
+            "最后对每个图形做关于不同轴的对称"
+          ],
+          "validation": {
+            "type": "kaleidoscope",
+            "rotations": 6,
+            "angle": 60,
+            "message": "🌟🌟🌟🌟 万花筒完成！你是 GeoGebra 大师！"
+          },
+          "points": 200,
+          "maxAttempts": 20
+        }
+      ]
+    },
+    {
+      "id": "lesson-6",
+      "title": "实战项目 - 绘制国旗",
+      "description": "综合运用所学技能绘制国旗",
+      "difficulty": "advanced",
+      "stars": 0,
+      "tasks": [
+        {
+          "id": "task-6-1",
+          "title": "绘制中国国旗",
+          "instruction": "绘制中国国旗（五星红旗）：\n1. 创建红色矩形背景（长宽比 3:2）\n2. 创建一个大五角星\n3. 创建四个小五角星环绕大星",
+          "hints": [
+            "矩形可以用多边形工具创建",
+            "五角星可以用正五边形然后连接顶点",
+            "四个小星应该指向大星的中心",
+            "大星在左上角，小星呈弧形排列"
+          ],
+          "validation": {
+            "type": "flag-china",
+            "elements": ["rectangle", "big-star", "small-stars"],
+            "message": "🇨🇳 五星红旗完成！太棒了！"
+          },
+          "points": 150,
+          "maxAttempts": 15
+        },
+        {
+          "id": "task-6-2",
+          "title": "绘制日本国旗",
+          "instruction": "绘制日本国旗（日章旗）：\n1. 创建白色矩形背景（长宽比 3:2）\n2. 在正中心创建一个红色圆形",
+          "hints": [
+            "白色矩形作为背景",
+            "红色圆形直径约为旗帜高度的 3/5",
+            "圆心应该在矩形的几何中心"
+          ],
+          "validation": {
+            "type": "flag-japan",
+            "elements": ["white-rectangle", "red-circle"],
+            "message": "🇯🇵 日章旗完成！"
+          },
+          "points": 80,
+          "maxAttempts": 10
+        }
+      ]
+    },
+    {
+      "id": "lesson-7",
+      "title": "实战项目 - 绘制卡通人物",
+      "description": "用几何图形创作卡通人物",
+      "difficulty": "expert",
+      "stars": 0,
+      "tasks": [
+        {
+          "id": "task-7-1",
+          "title": "绘制雪人",
+          "instruction": "用圆形和线条绘制一个雪人：\n1. 三个大小不同的圆（身体）\n2. 线条做手臂\n3. 小圆做眼睛和纽扣\n4. 三角形做鼻子",
+          "hints": [
+            "从下往上，圆逐渐变小",
+            "手臂可以用线段或曲线",
+            "可以添加帽子、围巾等装饰",
+            "发挥创意！"
+          ],
+          "validation": {
+            "type": "snowman",
+            "minElements": 10,
+            "message": "⛄ 雪人完成！很有创意！"
+          },
+          "points": 100,
+          "maxAttempts": 15
+        },
+        {
+          "id": "task-7-2",
+          "title": "终极创作：自由发挥",
+          "instruction": "用 GeoGebra 创作一个完整的图画：\n- 至少使用 20 个几何对象\n- 包含圆、线段、多边形\n- 有创意和美感\n- 可以是动物、建筑、风景等",
+          "hints": [
+            "先构思整体布局",
+            "从大轮廓开始，逐步添加细节",
+            "使用不同颜色增加视觉效果",
+            "可以分层绘制（背景、主体、细节）"
+          ],
+          "validation": {
+            "type": "free-creation",
+            "minObjects": 20,
+            "message": "🎨 艺术作品完成！你是真正的 GeoGebra 艺术家！"
+          },
+          "points": 300,
+          "maxAttempts": 30
         }
       ]
     }
@@ -300,6 +511,28 @@
     "passingScore": 60,
     "showHintsAfterAttempts": 2,
     "maxAttempts": 5,
-    "geoGebraVersion": "6"
+    "geoGebraVersion": "6",
+    "scoreMultipliers": {
+      "firstTry": 1.0,
+      "secondTry": 0.8,
+      "thirdTry": 0.6,
+      "hintPenalty": 0.1
+    },
+    "rankLevels": [
+      {"name": "初学者", "minScore": 0, "icon": "🌱"},
+      {"name": "学习者", "minScore": 200, "icon": "📚"},
+      {"name": "熟练者", "minScore": 500, "icon": "✨"},
+      {"name": "高手", "minScore": 1000, "icon": "🏆"},
+      {"name": "大师", "minScore": 2000, "icon": "👑"},
+      {"name": "传奇", "minScore": 3000, "icon": "🌟"}
+    ],
+    "achievements": [
+      {"id": "first-task", "name": "第一步", "description": "完成第一个任务", "icon": "🎯"},
+      {"id": "lesson-complete", "name": "课程完成", "description": "完成一个完整课程", "icon": "📖"},
+      {"id": "perfect-score", "name": "完美表现", "description": "任务一次通过", "icon": "💯"},
+      {"id": "challenge-master", "name": "挑战大师", "description": "完成所有挑战题", "icon": "🏅"},
+      {"id": "artist", "name": "艺术家", "description": "完成自由创作", "icon": "🎨"},
+      {"id": "legend", "name": "传奇", "description": "总分达到 3000", "icon": "⭐"}
+    ]
   }
 }

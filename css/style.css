@@ -407,3 +407,185 @@ header p {
   color: #856404;
   font-weight: 600;
 }
+
+/* Achievement Notification */
+@keyframes slideInRight {
+  from { transform: translateX(400px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(400px); }
+}
+
+.achievement-notification {
+  animation: slideInRight 0.5s ease-out;
+}
+
+/* User Rank Display */
+.user-rank {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin: 15px 0;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Score Display */
+.score-display {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin: 10px 0;
+}
+
+/* Challenge Badge */
+.challenge-badge {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+/* Progress Bar Enhanced */
+.progress-fill {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.8em;
+  font-weight: bold;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Task Points Display */
+.task-points {
+  background: #ff9800;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.9em;
+  font-weight: bold;
+  display: inline-block;
+  margin: 5px 0;
+}
+
+/* Completion Modal Enhanced */
+.modal-content {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  max-width: 500px;
+  text-align: center;
+  animation: zoomIn 0.3s;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.modal-content .stars {
+  font-size: 3em;
+  margin: 20px 0;
+}
+
+/* Lesson Item Stars */
+.lesson-stars {
+  color: #ffc107;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+/* Difficulty Badge */
+.difficulty {
+  font-size: 0.75em;
+  padding: 3px 10px;
+  border-radius: 12px;
+  margin-left: 8px;
+  font-weight: bold;
+}
+
+.difficulty.beginner { 
+  background: linear-gradient(135deg, #c8e6c9 0%, #81c784 100%); 
+  color: #2e7d32; 
+}
+
+.difficulty.intermediate { 
+  background: linear-gradient(135deg, #fff9c4 0%, #ffd54f 100%); 
+  color: #f57f17; 
+}
+
+.difficulty.advanced { 
+  background: linear-gradient(135deg, #ffcdd2 0%, #e57373 100%); 
+  color: #c62828; 
+}
+
+.difficulty.expert { 
+  background: linear-gradient(135deg, #e1bee7 0%, #ba68c8 100%); 
+  color: #6a1b9a; 
+}
+
+/* Stats Panel Enhanced */
+.stats-panel {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-top: 20px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.3s;
+}
+
+.stat-item:hover {
+  background: rgba(102, 126, 234, 0.1);
+  padding-left: 10px;
+  border-radius: 5px;
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  color: #666;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-weight: bold;
+  color: var(--primary-color);
+  font-size: 1.1em;
+}
