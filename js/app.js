@@ -165,6 +165,10 @@ class GeoGebraTutorial {
       appName: "graphing",
       appletOnLoad: (api) => {
         this.applet = api;
+        // 注册到安全 API 包装器
+        if (window.safeGGB) {
+          window.safeGGB.setApplet(api);
+        }
         console.log('GeoGebra applet loaded');
         // 不执行任何清空操作，让 GeoGebra 使用默认状态
       },
@@ -180,7 +184,7 @@ class GeoGebraTutorial {
       errorDialogHandler: () => {},
       showLogging: false,
       onError: (e) => {
-        console.log('GeoGebra error caught and suppressed:', e);
+        console.log('[GeoGebra] Error suppressed:', e);
       }
     };
 
@@ -191,11 +195,11 @@ class GeoGebraTutorial {
         const applet = new GGBApplet(parameters, '6.0');
         applet.inject('geogebra-container');
       } catch (error) {
-        console.error('Failed to inject GeoGebra:', error);
+        console.error('[GeoGebra] Failed to inject:', error);
       }
     };
     script.onerror = (error) => {
-      console.error('Failed to load GeoGebra script:', error);
+      console.error('[GeoGebra] Failed to load script:', error);
     };
     document.head.appendChild(script);
   }
@@ -303,36 +307,44 @@ class GeoGebraTutorial {
     }
   }
 
-  // 验证方法
+  // 验证方法 - 使用安全 API
   validateObjectExists(validation) {
     try {
-      const obj = this.applet.getObject(validation.objectName);
+      const safeGGB = window.safeGGB || this;
+      const obj = safeGGB.getObject(validation.objectName);
       return obj !== null && obj !== undefined;
     } catch (e) {
+      console.warn('[Validation] getObject error:', e.message);
       return false;
     }
   }
 
   validatePointCoordinates(validation) {
     try {
-      const x = this.applet.getXcoord(validation.objectName);
-      const y = this.applet.getYcoord(validation.objectName);
+      const safeGGB = window.safeGGB || this;
+      const x = safeGGB.getXcoord(validation.objectName);
+      const y = safeGGB.getYcoord(validation.objectName);
+      if (x === null || y === null) return false;
       const tol = validation.tolerance || 0.1;
       return Math.abs(x - validation.expectedX) < tol && 
              Math.abs(y - validation.expectedY) < tol;
     } catch (e) {
+      console.warn('[Validation] getCoordinates error:', e.message);
       return false;
     }
   }
 
   validateMultiplePoints(validation) {
+    const safeGGB = window.safeGGB || this;
     const tol = validation.tolerance || 0.1;
     return validation.points.every(p => {
       try {
-        const x = this.applet.getXcoord(p.name);
-        const y = this.applet.getYcoord(p.name);
+        const x = safeGGB.getXcoord(p.name);
+        const y = safeGGB.getYcoord(p.name);
+        if (x === null || y === null) return false;
         return Math.abs(x - p.x) < tol && Math.abs(y - p.y) < tol;
       } catch (e) {
+        console.warn('[Validation] getPoint error:', e.message);
         return false;
       }
     });
@@ -348,40 +360,47 @@ class GeoGebraTutorial {
 
   validateCircleRadius(validation) {
     try {
-      const radius = this.applet.getLength(validation.centerName);
+      const safeGGB = window.safeGGB || this;
+      const radius = safeGGB.getLength(validation.centerName);
+      if (radius === null) return false;
       const tol = validation.tolerance || 0.1;
       return Math.abs(radius - validation.expectedRadius) < tol;
     } catch (e) {
+      console.warn('[Validation] getLength error:', e.message);
       return false;
     }
   }
 
   validateFunctionExists(validation) {
     try {
-      const func = this.applet.getObject(validation.functionName);
+      const safeGGB = window.safeGGB || this;
+      const func = safeGGB.getObject(validation.functionName);
       return func !== null && func !== undefined;
     } catch (e) {
+      console.warn('[Validation] getFunction error:', e.message);
       return false;
     }
   }
 
   validateSquare(validation) {
     try {
+      const safeGGB = window.safeGGB || this;
       const points = validation.points;
       const tol = validation.tolerance || 0.2;
       const sideLength = validation.sideLength;
       
       // 检查四个点是否存在
       for (let p of points) {
-        if (!this.applet.getObject(p)) return false;
+        if (!safeGGB.getObject(p)) return false;
       }
       
       // 检查边长
       const dist = (p1, p2) => {
-        const x1 = this.applet.getXcoord(p1);
-        const y1 = this.applet.getYcoord(p1);
-        const x2 = this.applet.getXcoord(p2);
-        const y2 = this.applet.getYcoord(p2);
+        const x1 = safeGGB.getXcoord(p1);
+        const y1 = safeGGB.getYcoord(p1);
+        const x2 = safeGGB.getXcoord(p2);
+        const y2 = safeGGB.getYcoord(p2);
+        if (x1 === null || y1 === null || x2 === null || y2 === null) return 0;
         return Math.sqrt((x2-x1)**2 + (y2-y1)**2);
       };
       
@@ -394,52 +413,59 @@ class GeoGebraTutorial {
       
       return sides.every(s => Math.abs(s - sideLength) < tol);
     } catch (e) {
+      console.warn('[Validation] validateSquare error:', e.message);
       return false;
     }
   }
 
   validateFiveCircles(validation) {
     try {
+      const safeGGB = window.safeGGB || this;
       const tol = validation.tolerance || 0.2;
       const radius = validation.radius;
       
       // 检查是否有 5 个圆
       let circleCount = 0;
       for (let i = 0; i < 20; i++) {
-        const obj = this.applet.getObject(`c${i+1}`);
-        if (obj && obj.getTypeName() === 'conic') {
+        const obj = safeGGB.getObject(`c${i+1}`);
+        if (obj && obj.getTypeName && obj.getTypeName() === 'conic') {
           circleCount++;
         }
       }
       
       return circleCount >= 5;
     } catch (e) {
+      console.warn('[Validation] validateFiveCircles error:', e.message);
       return false;
     }
   }
 
   validateMultipleFunctions(validation) {
     try {
+      const safeGGB = window.safeGGB || this;
       return validation.functions.every((func, index) => {
-        const obj = this.applet.getObject(`f${index+1}`);
+        const obj = safeGGB.getObject(`f${index+1}`);
         return obj !== null;
       });
     } catch (e) {
+      console.warn('[Validation] validateMultipleFunctions error:', e.message);
       return false;
     }
   }
 
   validateFreeCreation(validation) {
     try {
+      const safeGGB = window.safeGGB || this;
       // 检查对象数量
       let objectCount = 0;
       for (let i = 0; i < 100; i++) {
-        const obj = this.applet.getObject(`a${i+1}`);
+        const obj = safeGGB.getObject(`a${i+1}`);
         if (obj) objectCount++;
       }
       
       return objectCount >= validation.minObjects;
     } catch (e) {
+      console.warn('[Validation] validateFreeCreation error:', e.message);
       return false;
     }
   }
