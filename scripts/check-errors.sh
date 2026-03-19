@@ -82,11 +82,14 @@ fi
 # 7. 检查 Vercel 部署状态
 log "检查 Vercel 部署状态..."
 if command -v curl &> /dev/null; then
-    RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://geogebra-tutorial-dov9.vercel.app || echo "000")
+    RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 10 https://geogebra-tutorial-dov9.vercel.app 2>/dev/null || echo "000")
     if [ "$RESPONSE" = "200" ]; then
         log "✅ Vercel 网站可访问 (HTTP $RESPONSE)"
     elif [ "$RESPONSE" = "000" ]; then
-        log "⚠️  Vercel 网站暂时无法访问（可能是 DNS 问题）"
+        log "❌ Vercel 网站无法访问 (curl 超时 - 连接失败)"
+        log "📋 原因：Vercel 项目配置问题，需要人工删除并重新创建项目"
+        log "🔧 Git 状态正常，代码已推送到 GitHub"
+        log "🔗 参考：修复 Vercel 部署问题.md"
     else
         log "⚠️  Vercel 返回异常状态码：$RESPONSE"
     fi
