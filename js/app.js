@@ -1,191 +1,358 @@
 /**
- * GeoGebra 互动教学网站 - 主程序 v2.0
- * 功能：课程管理、题目验证、提示系统、进度追踪、评分系统、成就系统
+ * GeoGebra 闯关学习网站 - 主程序 v3.0
+ * 游戏化学习系统 - 闯关模式
  */
 
-class GeoGebraTutorial {
+class GeoGebraGame {
   constructor() {
-    this.currentLesson = null;
-    this.currentTask = null;
-    this.lessons = [];
-    this.userProgress = this.loadProgress();
+    // 游戏状态
+    this.currentChapter = 1;
+    this.currentLevel = 1;
+    this.currentTask = 1;
+    this.userScore = 0;
+    this.userLevel = '初学者';
+    this.completedLevels = [];
+    this.levelStars = {};
+    
+    // 当前关卡数据
+    this.chapters = [];
+    this.currentLevelData = null;
+    this.currentTaskData = null;
+    
+    // GeoGebra
     this.applet = null;
+    this.ggbReady = false;
+    
+    // 任务状态
+    this.attemptCount = 0;
+    this.hintsUsed = 0;
+    this.taskStartTime = null;
+    
+    // 连击系统
+    this.comboCount = 0;
+    this.lastCompleteTime = null;
+    
+    // 初始化
     this.init();
   }
 
   async init() {
-    await this.loadLessons();
-    this.renderLessonList();
+    await this.loadChapters();
+    this.loadProgress();
+    this.renderLevelList();
+    this.updateUserStats();
     this.setupEventListeners();
-    this.updateStats();
-    this.checkAchievements();
-    console.log('GeoGebra Tutorial v2.0 initialized');
+    console.log('🎮 GeoGebra 闯关学习 v3.0 已启动');
   }
 
-  // 加载课程数据
-  async loadLessons() {
+  // ========== 数据加载 ==========
+
+  async loadChapters() {
     try {
       const response = await fetch('data/lessons.json');
       const data = await response.json();
-      this.lessons = data.lessons;
-      this.settings = data.settings;
-      console.log(`Loaded ${this.lessons.length} lessons`);
+      this.chapters = data.chapters || data.lessons || [];
+      console.log(`📚 加载了 ${this.chapters.length} 个章节`);
     } catch (error) {
-      console.error('Failed to load lessons:', error);
+      console.error('加载章节失败:', error);
       alert('加载课程数据失败，请刷新页面重试');
     }
   }
 
-  // 渲染课程列表
-  renderLessonList() {
-    const lessonList = document.getElementById('lesson-list');
-    lessonList.innerHTML = '';
+  loadProgress() {
+    const saved = localStorage.getItem('geogebra-progress');
+    if (saved) {
+      const progress = JSON.parse(saved);
+      this.userScore = progress.score || 0;
+      this.completedLevels = progress.completedLevels || [];
+      this.levelStars = progress.levelStars || {};
+      this.comboCount = progress.comboCount || 0;
+    }
+  }
 
-    this.lessons.forEach((lesson, index) => {
-      const isCompleted = this.isLessonCompleted(lesson.id);
-      const li = document.createElement('li');
-      li.className = `lesson-item ${this.currentLesson?.id === lesson.id ? 'active' : ''} ${isCompleted ? 'completed' : ''}`;
-      li.onclick = () => this.loadLesson(index);
+  saveProgress() {
+    const progress = {
+      score: this.userScore,
+      completedLevels: this.completedLevels,
+      levelStars: this.levelStars,
+      comboCount: this.comboCount,
+      lastSave: Date.now()
+    };
+    localStorage.setItem('geogebra-progress', JSON.stringify(progress));
+  }
+
+  // ========== 用户等级系统 ==========
+
+  getUserLevel(score) {
+    if (score >= 1000) return { name: '大师', icon: '👑' };
+    if (score >= 600) return { name: '专家', icon: '🏆' };
+    if (score >= 300) return { name: '熟练者', icon: '🥇' };
+    if (score >= 100) return { name: '练习者', icon: '🥈' };
+    return { name: '初学者', icon: '🥉' };
+  }
+
+  updateUserStats() {
+    const levelInfo = this.getUserLevel(this.userScore);
+    this.userLevel = levelInfo.name;
+    
+    document.getElementById('user-score').textContent = this.userScore;
+    document.getElementById('user-level').innerHTML = `
+      <span class="icon">${levelInfo.icon}</span>
+      <span class="level-name">${levelInfo.name}</span>
+    `;
+    
+    const totalLevels = this.chapters.reduce((sum, ch) => sum + (ch.levels?.length || 0), 0);
+    document.getElementById('user-progress').textContent = `${this.completedLevels.length}/${totalLevels}`;
+  }
+
+  addScore(points, isCombo = false) {
+    const comboMultiplier = isCombo && this.comboCount > 1 ? 1 + (this.comboCount * 0.1) : 1;
+    const finalPoints = Math.round(points * comboMultiplier);
+    this.userScore += finalPoints;
+    
+    if (isCombo && this.comboCount > 1) {
+      this.showComboEffect(this.comboCount);
+    }
+    
+    this.showScoreIncrease(finalPoints);
+    this.updateUserStats();
+    this.saveProgress();
+    this.checkLevelUp();
+  }
+
+  checkLevelUp() {
+    const oldLevel = this.userLevel;
+    const newLevelInfo = this.getUserLevel(this.userScore);
+    
+    if (newLevelInfo.name !== oldLevel) {
+      this.userLevel = newLevelInfo.name;
+      this.showLevelUpAnimation();
+    }
+  }
+
+  // ========== 渲染 ==========
+
+  renderLevelList() {
+    const container = document.getElementById('level-list');
+    if (!container) return;
+    
+    let html = '';
+    
+    this.chapters.forEach((chapter, chIndex) => {
+      const levels = chapter.levels || chapter.tasks || [];
+      if (!levels.length) return;
       
-      const stars = this.getLessonStars(lesson.id);
-      const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
-      
-      li.innerHTML = `
-        <div>
-          <strong>${lesson.title}</strong>
-          <span class="difficulty ${lesson.difficulty}">${this.getDifficultyText(lesson.difficulty)}</span>
-        </div>
-        <div style="font-size: 0.85em; color: #666; margin-top: 5px;">
-          ${lesson.tasks.length} 个任务 | ${starsDisplay}
-          ${isCompleted ? ' ✓' : ''}
-        </div>
+      html += `
+        <div class="chapter-section">
+          <div class="chapter-title">
+            <span>${chapter.icon || '📖'}</span>
+            <span>${chapter.title || `第${chIndex + 1}章`}</span>
+          </div>
+          <ul class="level-list">
       `;
       
-      lessonList.appendChild(li);
+      levels.forEach((level, levelIndex) => {
+        const globalLevelIndex = this.getGlobalLevelIndex(chIndex, levelIndex);
+        const isCompleted = this.completedLevels.includes(globalLevelIndex);
+        const isLocked = !this.isLevelUnlocked(chIndex, levelIndex);
+        const stars = this.levelStars[globalLevelIndex] || 0;
+        
+        html += `
+          <li class="level-item ${this.currentLevel === globalLevelIndex ? 'active' : ''} ${isLocked ? 'locked' : ''}" 
+              data-chapter="${chIndex}" 
+              data-level="${levelIndex}"
+              onclick="${isLocked ? '' : `app.loadLevel(${chIndex}, ${levelIndex})`}">
+            ${isLocked 
+              ? `<span class="lock-icon">🔒</span>` 
+              : `<span class="level-number">${levelIndex + 1}</span>`
+            }
+            <div class="level-info">
+              <div class="level-name">${level.title || `关卡 ${levelIndex + 1}`}</div>
+              ${isCompleted 
+                ? `<div class="level-stars">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</div>` 
+                : ''
+              }
+            </div>
+          </li>
+        `;
+      });
+      
+      html += `</ul></div>`;
     });
+    
+    container.innerHTML = html;
   }
 
-  getDifficultyText(level) {
-    const texts = {
-      beginner: '入门',
-      intermediate: '进阶',
-      advanced: '高级',
-      expert: '专家'
-    };
-    return texts[level] || level;
+  getGlobalLevelIndex(chIndex, levelIndex) {
+    let offset = 0;
+    for (let i = 0; i < chIndex; i++) {
+      offset += this.chapters[i].levels?.length || this.chapters[i].tasks?.length || 0;
+    }
+    return offset + levelIndex;
   }
 
-  // 获取课程星级
-  getLessonStars(lessonId) {
-    const lesson = this.lessons.find(l => l.id === lessonId);
-    if (!lesson) return 0;
+  isLevelUnlocked(chIndex, levelIndex) {
+    if (chIndex === 0 && levelIndex === 0) return true;
     
-    const totalScore = lesson.tasks.reduce((sum, task) => {
-      const progress = this.userProgress.tasks[task.id];
-      return sum + (progress ? progress.score : 0);
-    }, 0);
-    
-    const maxScore = lesson.tasks.reduce((sum, task) => sum + task.points, 0);
-    const percentage = totalScore / maxScore;
-    
-    if (percentage >= 0.9) return 5;
-    if (percentage >= 0.7) return 4;
-    if (percentage >= 0.5) return 3;
-    if (percentage >= 0.3) return 2;
-    if (percentage > 0) return 1;
-    return 0;
-  }
-
-  // 加载课程
-  loadLesson(lessonIndex) {
-    this.currentLesson = this.lessons[lessonIndex];
-    this.currentTaskIndex = 0;
-    
-    // 找到第一个未完成的任务
-    for (let i = 0; i < this.currentLesson.tasks.length; i++) {
-      const task = this.currentLesson.tasks[i];
-      if (!this.isTaskCompleted(task.id)) {
-        this.currentTaskIndex = i;
-        break;
-      }
+    const prevLevelIndex = this.getGlobalLevelIndex(chIndex, levelIndex - 1);
+    if (levelIndex > 0) {
+      return this.completedLevels.includes(prevLevelIndex);
     }
     
-    this.renderLessonList();
-    this.loadTask(this.currentTaskIndex);
-    this.initializeGeoGebra();
+    if (chIndex > 0) {
+      const prevChapter = this.chapters[chIndex - 1];
+      const prevChapterLevels = prevChapter.levels?.length || prevChapter.tasks?.length || 0;
+      const lastLevelOfPrevChapter = this.getGlobalLevelIndex(chIndex - 1, prevChapterLevels - 1);
+      return this.completedLevels.includes(lastLevelOfPrevChapter);
+    }
+    
+    return false;
   }
 
-  // 加载任务
+  // ========== 关卡加载 ==========
+
+  async loadLevel(chapterIndex, levelIndex) {
+    const chapter = this.chapters[chapterIndex];
+    const level = (chapter.levels || chapter.tasks || [])[levelIndex];
+    
+    if (!level) return;
+    
+    this.currentChapter = chapterIndex;
+    this.currentLevel = this.getGlobalLevelIndex(chapterIndex, levelIndex);
+    this.currentLevelData = level;
+    this.currentTask = 1;
+    
+    // 更新 UI
+    document.getElementById('current-level-title').textContent = level.title || `关卡 ${levelIndex + 1}`;
+    
+    // 高亮当前关卡
+    document.querySelectorAll('.level-item').forEach(item => {
+      item.classList.remove('active');
+      if (item.dataset.chapter == chapterIndex && item.dataset.level == levelIndex) {
+        item.classList.add('active');
+      }
+    });
+    
+    // 加载 GeoGebra
+    this.initializeGeoGebra(level);
+    
+    // 加载第一个任务
+    this.loadTask(0);
+  }
+
   loadTask(taskIndex) {
-    if (!this.currentLesson || taskIndex >= this.currentLesson.tasks.length) {
-      this.showLessonComplete();
+    const tasks = this.currentLevelData.tasks || [];
+    if (taskIndex >= tasks.length) {
+      this.completeLevel();
       return;
     }
-
-    this.currentTask = this.currentLesson.tasks[taskIndex];
+    
+    this.currentTask = taskIndex + 1;
+    this.currentTaskData = tasks[taskIndex];
     this.attemptCount = 0;
-    this.hintsShown = 0;
-
+    this.hintsUsed = 0;
+    this.taskStartTime = Date.now();
+    
     // 更新 UI
-    document.getElementById('task-title').textContent = this.currentTask.title;
-    document.getElementById('task-instruction').innerHTML = `
-      <strong>任务 ${taskIndex + 1}/${this.currentLesson.tasks.length}:</strong><br>
-      ${this.currentTask.instruction}
-    `;
+    this.renderTaskUI(taskIndex, tasks);
+    this.renderHints(tasks[taskIndex]);
     
-    document.getElementById('task-number').textContent = 
-      `课程：${this.currentLesson.title} | 任务 ${taskIndex + 1}/${this.currentLesson.tasks.length} | 分值：${this.currentTask.points}`;
+    // 重置反馈
+    document.getElementById('feedback-section').innerHTML = '';
     
-    // 重置提示和反馈
-    document.getElementById('hint-section').innerHTML = `
-      <h3>💡 需要提示吗？</h3>
-      <button class="btn btn-warning" onclick="tutorial.showHint()">
-        获取提示 (${this.currentTask.hints.length - this.hintsShown} 个可用)
-      </button>
-    `;
-    
-    document.getElementById('feedback').innerHTML = '';
-    document.getElementById('attempt-counter').style.display = 'none';
-    
-    // 更新验证按钮
+    // 重置按钮状态
     document.getElementById('check-btn').disabled = false;
-    document.getElementById('check-btn').textContent = '✓ 检查答案';
-    
-    // 滚动到顶部
-    document.querySelector('.task-panel').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('check-btn').style.display = 'flex';
+    document.getElementById('next-btn').style.display = 'none';
   }
 
-  // 初始化 GeoGebra
-  initializeGeoGebra() {
+  renderTaskUI(taskIndex, tasks) {
+    const task = tasks[taskIndex];
+    
+    document.getElementById('task-header').style.display = 'block';
+    document.getElementById('task-chapter').textContent = this.chapters[this.currentChapter].title;
+    document.getElementById('task-title').textContent = task.title || `任务 ${taskIndex + 1}`;
+    document.getElementById('task-instruction').style.display = 'block';
+    document.getElementById('task-instruction').innerHTML = `<strong>任务目标：</strong>${task.instruction || '完成 GeoGebra 操作'}`;
+    document.getElementById('hint-section').style.display = 'block';
+    
+    // 进度点
+    const dotsHtml = tasks.map((_, i) => 
+      `<span class="progress-dot ${i < taskIndex ? 'completed' : ''} ${i === taskIndex ? 'active' : ''}"></span>`
+    ).join('');
+    document.getElementById('progress-dots').innerHTML = dotsHtml;
+    document.getElementById('task-progress-text').textContent = `${taskIndex + 1}/${tasks.length}`;
+  }
+
+  renderHints(task) {
+    const hints = task.hints || [];
+    const container = document.getElementById('hint-buttons');
+    
+    if (!hints.length) {
+      document.getElementById('hint-section').style.display = 'none';
+      return;
+    }
+    
+    let html = '';
+    hints.forEach((hint, index) => {
+      const cost = Math.round(task.points * 0.2 * (index + 1));
+      html += `
+        <button class="hint-btn" id="hint-btn-${index}" onclick="app.showHint(${index}, ${cost})">
+          <span>💬 提示 ${index + 1}</span>
+          <span class="hint-cost">-${cost}分</span>
+        </button>
+      `;
+    });
+    
+    container.innerHTML = html;
+  }
+
+  // ========== GeoGebra 初始化 ==========
+
+  initializeGeoGebra(level) {
     const container = document.getElementById('geogebra-container');
-    container.innerHTML = '<div class="spinner"></div><p style="text-align:center;">正在加载 GeoGebra...</p>';
+    container.innerHTML = `
+      <div class="ggb-loading">
+        <div class="spinner"></div>
+        <div class="loading-text">正在加载 GeoGebra 画布...</div>
+      </div>
+    `;
 
     const parameters = {
       id: "geogebra-applet",
-      appName: "graphing",
+      appName: level?.ggbApp || "graphing",
       appletOnLoad: (api) => {
         this.applet = api;
-        // 注册到安全 API 包装器
+        this.ggbReady = true;
+        
         if (window.safeGGB) {
           window.safeGGB.setApplet(api);
         }
-        console.log('GeoGebra applet loaded');
-        // 不执行任何清空操作，让 GeoGebra 使用默认状态
+        
+        console.log('GeoGebra 已加载');
+        
+        // 加载关卡预设内容
+        if (level?.ggbInitialCommands) {
+          level.ggbInitialCommands.forEach(cmd => {
+            try {
+              api.evalCommand(cmd);
+            } catch (e) {
+              console.warn('执行初始命令失败:', e);
+            }
+          });
+        }
       },
       scaleContainerRatio: true,
       allowStyleBar: false,
       showToolBar: true,
       showAlgebraInput: true,
-      showResetIcon: false,
+      showResetIcon: true,
       showFullscreenButton: true,
       useBrowserForJS: true,
-      // 禁用所有错误提示
       showErrorDialog: false,
       errorDialogHandler: () => {},
       showLogging: false,
-      onError: (e) => {
-        console.log('[GeoGebra] Error suppressed:', e);
-      }
+      onError: (e) => console.log('[GeoGebra] Error:', e)
     };
 
     const script = document.createElement('script');
@@ -195,580 +362,348 @@ class GeoGebraTutorial {
         const applet = new GGBApplet(parameters, '6.0');
         applet.inject('geogebra-container');
       } catch (error) {
-        console.error('[GeoGebra] Failed to inject:', error);
+        console.error('GeoGebra 注入失败:', error);
       }
     };
     script.onerror = (error) => {
-      console.error('[GeoGebra] Failed to load script:', error);
+      console.error('GeoGebra 脚本加载失败:', error);
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">⚠️</div>
+          <div class="title">GeoGebra 加载失败</div>
+          <div class="desc">请检查网络连接后刷新页面</div>
+        </div>
+      `;
     };
     document.head.appendChild(script);
   }
 
-  // 重置 GeoGebra 画布
   resetGeoGebra() {
-    // 暂时不执行清空操作，避免弹窗错误
-    // 让用户手动使用 GeoGebra 的重置按钮
-    if (this.applet) {
-      console.log('GeoGebra ready for task');
-    }
-  }
-
-  // 显示提示
-  showHint() {
-    if (!this.currentTask || this.hintsShown >= this.currentTask.hints.length) {
-      return;
-    }
-
-    const hint = this.currentTask.hints[this.hintsShown];
-    const hintSection = document.getElementById('hint-section');
+    if (!this.applet) return;
     
-    const hintDiv = document.createElement('div');
-    hintDiv.className = 'hint';
-    hintDiv.innerHTML = `<strong>提示 ${this.hintsShown + 1}:</strong> ${hint}`;
-    
-    hintSection.appendChild(hintDiv);
-    this.hintsShown++;
-    
-    const remaining = this.currentTask.hints.length - this.hintsShown;
-    const btn = hintSection.querySelector('button');
-    if (btn) {
-      btn.textContent = `获取提示 (${remaining} 个可用)`;
-      if (remaining <= 0) {
-        btn.disabled = true;
-        btn.textContent = '提示已用完';
-      }
-    }
-    
-    this.attemptCount++;
-    this.updateAttemptCounter();
-  }
-
-  // 更新尝试计数器
-  updateAttemptCounter() {
-    const counter = document.getElementById('attempt-counter');
-    counter.style.display = 'block';
-    counter.innerHTML = `⚠️ 尝试次数：${this.attemptCount} | 使用提示会降低得分`;
-  }
-
-  // 检查答案
-  checkAnswer() {
-    if (!this.currentTask || !this.applet) {
-      alert('请先加载 GeoGebra 画布');
-      return;
-    }
-
-    const validation = this.currentTask.validation;
-    let isCorrect = false;
-
-    switch (validation.type) {
-      case 'object-exists':
-        isCorrect = this.validateObjectExists(validation);
-        break;
-      case 'point-coordinates':
-        isCorrect = this.validatePointCoordinates(validation);
-        break;
-      case 'multiple-points':
-        isCorrect = this.validateMultiplePoints(validation);
-        break;
-      case 'segment-exists':
-        isCorrect = this.validateSegmentExists(validation);
-        break;
-      case 'line-exists':
-        isCorrect = this.validateLineExists(validation);
-        break;
-      case 'circle-radius':
-        isCorrect = this.validateCircleRadius(validation);
-        break;
-      case 'function-exists':
-        isCorrect = this.validateFunctionExists(validation);
-        break;
-      case 'square':
-        isCorrect = this.validateSquare(validation);
-        break;
-      case 'five-circles':
-        isCorrect = this.validateFiveCircles(validation);
-        break;
-      case 'multiple-functions':
-        isCorrect = this.validateMultipleFunctions(validation);
-        break;
-      case 'free-creation':
-        isCorrect = this.validateFreeCreation(validation);
-        break;
-      default:
-        isCorrect = this.validateObjectExists({objectName: 'A'});
-    }
-
-    this.attemptCount++;
-    
-    if (isCorrect) {
-      this.handleSuccess(validation.message);
-    } else {
-      this.handleFailure();
-    }
-  }
-
-  // 验证方法 - 使用安全 API
-  validateObjectExists(validation) {
     try {
-      const safeGGB = window.safeGGB || this;
-      const obj = safeGGB.getObject(validation.objectName);
-      return obj !== null && obj !== undefined;
-    } catch (e) {
-      console.warn('[Validation] getObject error:', e.message);
-      return false;
-    }
-  }
-
-  validatePointCoordinates(validation) {
-    try {
-      const safeGGB = window.safeGGB || this;
-      const x = safeGGB.getXcoord(validation.objectName);
-      const y = safeGGB.getYcoord(validation.objectName);
-      if (x === null || y === null) return false;
-      const tol = validation.tolerance || 0.1;
-      return Math.abs(x - validation.expectedX) < tol && 
-             Math.abs(y - validation.expectedY) < tol;
-    } catch (e) {
-      console.warn('[Validation] getCoordinates error:', e.message);
-      return false;
-    }
-  }
-
-  validateMultiplePoints(validation) {
-    const safeGGB = window.safeGGB || this;
-    const tol = validation.tolerance || 0.1;
-    return validation.points.every(p => {
-      try {
-        const x = safeGGB.getXcoord(p.name);
-        const y = safeGGB.getYcoord(p.name);
-        if (x === null || y === null) return false;
-        return Math.abs(x - p.x) < tol && Math.abs(y - p.y) < tol;
-      } catch (e) {
-        console.warn('[Validation] getPoint error:', e.message);
-        return false;
-      }
-    });
-  }
-
-  validateSegmentExists(validation) {
-    return this.validateObjectExists(validation);
-  }
-
-  validateLineExists(validation) {
-    return this.validateObjectExists(validation);
-  }
-
-  validateCircleRadius(validation) {
-    try {
-      const safeGGB = window.safeGGB || this;
-      const radius = safeGGB.getLength(validation.centerName);
-      if (radius === null) return false;
-      const tol = validation.tolerance || 0.1;
-      return Math.abs(radius - validation.expectedRadius) < tol;
-    } catch (e) {
-      console.warn('[Validation] getLength error:', e.message);
-      return false;
-    }
-  }
-
-  validateFunctionExists(validation) {
-    try {
-      const safeGGB = window.safeGGB || this;
-      const func = safeGGB.getObject(validation.functionName);
-      return func !== null && func !== undefined;
-    } catch (e) {
-      console.warn('[Validation] getFunction error:', e.message);
-      return false;
-    }
-  }
-
-  validateSquare(validation) {
-    try {
-      const safeGGB = window.safeGGB || this;
-      const points = validation.points;
-      const tol = validation.tolerance || 0.2;
-      const sideLength = validation.sideLength;
+      this.applet.reset();
       
-      // 检查四个点是否存在
-      for (let p of points) {
-        if (!safeGGB.getObject(p)) return false;
+      // 重新执行初始命令
+      const level = this.currentLevelData;
+      if (level?.ggbInitialCommands) {
+        level.ggbInitialCommands.forEach(cmd => {
+          try {
+            this.applet.evalCommand(cmd);
+          } catch (e) {}
+        });
       }
       
-      // 检查边长
-      const dist = (p1, p2) => {
-        const x1 = safeGGB.getXcoord(p1);
-        const y1 = safeGGB.getYcoord(p1);
-        const x2 = safeGGB.getXcoord(p2);
-        const y2 = safeGGB.getYcoord(p2);
-        if (x1 === null || y1 === null || x2 === null || y2 === null) return 0;
-        return Math.sqrt((x2-x1)**2 + (y2-y1)**2);
-      };
-      
-      const sides = [
-        dist(points[0], points[1]),
-        dist(points[1], points[2]),
-        dist(points[2], points[3]),
-        dist(points[3], points[0])
-      ];
-      
-      return sides.every(s => Math.abs(s - sideLength) < tol);
+      this.showToast('画布已重置', 'info');
     } catch (e) {
-      console.warn('[Validation] validateSquare error:', e.message);
-      return false;
+      console.warn('重置 GeoGebra 失败:', e);
     }
   }
 
-  validateFiveCircles(validation) {
-    try {
-      const safeGGB = window.safeGGB || this;
-      const tol = validation.tolerance || 0.2;
-      const radius = validation.radius;
-      
-      // 检查是否有 5 个圆
-      let circleCount = 0;
-      for (let i = 0; i < 20; i++) {
-        const obj = safeGGB.getObject(`c${i+1}`);
-        if (obj && obj.getTypeName && obj.getTypeName() === 'conic') {
-          circleCount++;
-        }
-      }
-      
-      return circleCount >= 5;
-    } catch (e) {
-      console.warn('[Validation] validateFiveCircles error:', e.message);
-      return false;
-    }
-  }
-
-  validateMultipleFunctions(validation) {
-    try {
-      const safeGGB = window.safeGGB || this;
-      return validation.functions.every((func, index) => {
-        const obj = safeGGB.getObject(`f${index+1}`);
-        return obj !== null;
+  toggleFullscreen() {
+    const container = document.getElementById('geogebra-container');
+    if (!document.fullscreenElement) {
+      container.requestFullscreen().catch(err => {
+        console.log('全屏失败:', err);
       });
-    } catch (e) {
-      console.warn('[Validation] validateMultipleFunctions error:', e.message);
-      return false;
+    } else {
+      document.exitFullscreen();
     }
   }
 
-  validateFreeCreation(validation) {
-    try {
-      const safeGGB = window.safeGGB || this;
-      // 检查对象数量
-      let objectCount = 0;
-      for (let i = 0; i < 100; i++) {
-        const obj = safeGGB.getObject(`a${i+1}`);
-        if (obj) objectCount++;
-      }
-      
-      return objectCount >= validation.minObjects;
-    } catch (e) {
-      console.warn('[Validation] validateFreeCreation error:', e.message);
-      return false;
-    }
-  }
+  // ========== 提示系统 ==========
 
-  // 处理成功
-  handleSuccess(message) {
-    const feedback = document.getElementById('feedback');
-    feedback.innerHTML = `<div class="feedback success">${message}</div>`;
+  showHint(hintIndex, cost) {
+    const task = this.currentTaskData;
+    const hints = task.hints || [];
     
-    // 计算得分
-    const basePoints = this.currentTask.points;
-    const attemptMultiplier = Math.max(0.5, 1 - (this.attemptCount - 1) * 0.2);
-    const hintPenalty = this.hintsShown * this.settings.scoreMultipliers.hintPenalty;
-    const finalScore = Math.round(basePoints * attemptMultiplier * (1 - hintPenalty));
+    if (hintIndex >= hints.length) return;
     
-    // 保存进度
-    this.saveTaskProgress(this.currentTask.id, finalScore);
+    const btn = document.getElementById(`hint-btn-${hintIndex}`);
+    if (btn.classList.contains('used')) return;
     
-    // 检查成就
-    this.checkAchievements();
-    
-    // 禁用检查按钮
-    document.getElementById('check-btn').disabled = true;
-    document.getElementById('check-btn').textContent = '✓ 已完成';
-    
-    // 显示下一题按钮
-    setTimeout(() => {
-      const nextBtn = document.createElement('button');
-      nextBtn.className = 'btn btn-primary';
-      nextBtn.innerHTML = '→ 下一题';
-      nextBtn.onclick = () => {
-        this.currentTaskIndex++;
-        this.loadTask(this.currentTaskIndex);
-        this.resetGeoGebra();
-      };
-      
-      const nav = document.querySelector('.task-navigation');
-      nav.innerHTML = '';
-      nav.appendChild(nextBtn);
-    }, 1000);
-    
-    this.updateStats();
-  }
-
-  // 处理失败
-  handleFailure() {
-    const feedback = document.getElementById('feedback');
-    feedback.innerHTML = `
-      <div class="feedback error">
-        还未正确完成，请再试一次。<br>
-        <small>如果遇到困难，可以使用提示功能</small>
-      </div>
-    `;
-    
-    const maxAttempts = this.currentTask.maxAttempts || this.settings.maxAttempts;
-    if (this.attemptCount >= maxAttempts) {
-      feedback.innerHTML += `
-        <div class="feedback warning" style="background: #fff3cd; color: #856404; margin-top: 10px;">
-          已达到最大尝试次数，是否查看答案并继续下一题？
-          <br>
-          <button class="btn btn-warning" style="margin-top: 10px;" onclick="tutorial.skipTask()">
-            跳过此题
-          </button>
-        </div>
-      `;
-    }
-  }
-
-  // 跳过任务
-  skipTask() {
-    this.currentTaskIndex++;
-    this.loadTask(this.currentTaskIndex);
-    this.resetGeoGebra();
-  }
-
-  // 显示课程完成
-  showLessonComplete() {
-    const modal = document.getElementById('completion-modal');
-    const totalScore = this.calculateLessonScore();
-    const maxScore = this.calculateMaxScore();
-    const percentage = Math.round((totalScore / maxScore) * 100);
-    
-    const stars = this.getLessonStars(this.currentLesson.id);
-    const starsDisplay = '⭐'.repeat(stars);
-    
-    document.getElementById('completion-title').textContent = 
-      percentage >= 60 ? '🎉 课程完成！' : '💪 继续加油！';
-    document.getElementById('completion-score').textContent = 
-      `得分：${totalScore} / ${maxScore} (${percentage}%) ${starsDisplay}`;
-    document.getElementById('completion-message').textContent = 
-      percentage >= 60 ? '太棒了！你已经掌握了本课程的内容。' : '多练习几次，你一定能做得更好！';
-    
-    // 显示用户等级
-    const rank = this.getUserRank();
-    document.getElementById('completion-message').innerHTML += 
-      `<br><br>🏅 当前等级：<strong>${rank.icon} ${rank.name}</strong>`;
-    
-    modal.classList.add('active');
-    
-    if (percentage >= 60) {
-      this.saveLessonCompletion(this.currentLesson.id);
-    }
-  }
-
-  // 计算分数
-  calculateLessonScore() {
-    if (!this.currentLesson) return 0;
-    return this.currentLesson.tasks.reduce((sum, task) => {
-      const progress = this.userProgress.tasks[task.id];
-      return sum + (progress ? progress.score : 0);
-    }, 0);
-  }
-
-  calculateMaxScore() {
-    if (!this.currentLesson) return 0;
-    return this.currentLesson.tasks.reduce((sum, task) => sum + task.points, 0);
-  }
-
-  // 获取用户等级
-  getUserRank() {
-    const totalScore = this.userProgress.totalScore || 0;
-    const ranks = this.settings.rankLevels || [];
-    
-    for (let i = ranks.length - 1; i >= 0; i--) {
-      if (totalScore >= ranks[i].minScore) {
-        return ranks[i];
-      }
-    }
-    
-    return ranks[0] || {name: '初学者', icon: '🌱'};
-  }
-
-  // 检查成就
-  checkAchievements() {
-    const achievements = this.settings.achievements || [];
-    const unlockedAchievements = this.userProgress.achievements || [];
-    
-    achievements.forEach(achievement => {
-      if (unlockedAchievements.includes(achievement.id)) return;
-      
-      let shouldUnlock = false;
-      
-      switch (achievement.id) {
-        case 'first-task':
-          shouldUnlock = Object.keys(this.userProgress.tasks).length >= 1;
-          break;
-        case 'lesson-complete':
-          shouldUnlock = Object.keys(this.userProgress.lessons).length >= 1;
-          break;
-        case 'perfect-score':
-          // 检查是否有一次满分的任务
-          shouldUnlock = Object.values(this.userProgress.tasks).some(t => {
-            const task = this.lessons.flatMap(l => l.tasks).find(tk => tk.id === t.taskId);
-            return task && t.score === task.points;
-          });
-          break;
-        case 'challenge-master':
-          shouldUnlock = this.userProgress.totalScore >= 1000;
-          break;
-        case 'artist':
-          shouldUnlock = this.userProgress.totalScore >= 2000;
-          break;
-        case 'legend':
-          shouldUnlock = this.userProgress.totalScore >= 3000;
-          break;
-      }
-      
-      if (shouldUnlock) {
-        this.unlockAchievement(achievement);
-      }
-    });
-  }
-
-  // 解锁成就
-  unlockAchievement(achievement) {
-    if (!this.userProgress.achievements) {
-      this.userProgress.achievements = [];
-    }
-    
-    this.userProgress.achievements.push(achievement.id);
+    // 扣除分数
+    this.userScore = Math.max(0, this.userScore - cost);
+    this.hintsUsed++;
+    this.updateUserStats();
     this.saveProgress();
     
-    // 显示成就通知
-    this.showAchievementNotification(achievement);
+    // 标记为已使用
+    btn.classList.add('used');
+    btn.innerHTML = `<span>✓ 提示 ${hintIndex + 1} 已显示</span>`;
+    btn.disabled = true;
+    
+    // 显示提示
+    this.showFeedback(hints[hintIndex], 'hint');
   }
 
-  // 显示成就通知
-  showAchievementNotification(achievement) {
-    const notification = document.createElement('div');
-    notification.className = 'achievement-notification';
-    notification.innerHTML = `
-      <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: slideIn 0.5s;">
-        <div style="font-size: 2em; margin-bottom: 10px;">${achievement.icon}</div>
-        <div style="font-weight: bold; font-size: 1.2em;">成就解锁！</div>
-        <div>${achievement.name}</div>
-        <div style="font-size: 0.9em; opacity: 0.9;">${achievement.description}</div>
-      </div>
-    `;
+  // ========== 答案验证 ==========
+
+  checkAnswer() {
+    if (!this.currentTaskData || !this.ggbReady) return;
     
-    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999;';
-    document.body.appendChild(notification);
+    this.attemptCount++;
+    const validation = this.currentTaskData.validation;
+    
+    if (!validation) {
+      this.taskSuccess();
+      return;
+    }
+    
+    const isValid = this.validateTask(validation);
+    
+    if (isValid) {
+      this.taskSuccess();
+    } else {
+      this.taskFailure();
+    }
+  }
+
+  validateTask(validation) {
+    try {
+      const safeGGB = window.safeGGB || this;
+      
+      switch (validation.type) {
+        case 'object-exists':
+          const obj = safeGGB.getObject(validation.objectName);
+          return obj !== null && obj !== undefined;
+        
+        case 'point-coordinates':
+          const x = safeGGB.getXcoord(validation.objectName);
+          const y = safeGGB.getYcoord(validation.objectName);
+          if (x === null || y === null) return false;
+          const tol = validation.tolerance || 0.1;
+          return Math.abs(x - validation.expectedX) < tol && 
+                 Math.abs(y - validation.expectedY) < tol;
+        
+        case 'multiple-points':
+          const tol2 = validation.tolerance || 0.1;
+          return validation.points.every(p => {
+            const px = safeGGB.getXcoord(p.name);
+            const py = safeGGB.getYcoord(p.name);
+            if (px === null || py === null) return false;
+            return Math.abs(px - p.x) < tol2 && Math.abs(py - p.y) < tol2;
+          });
+        
+        case 'segment-exists':
+        case 'line-exists':
+        case 'circle-exists':
+          return safeGGB.getObject(validation.objectName) !== null;
+        
+        case 'circle-radius':
+          const radius = safeGGB.getLength(validation.centerName);
+          if (radius === null) return false;
+          const tol3 = validation.tolerance || 0.1;
+          return Math.abs(radius - validation.expectedRadius) < tol3;
+        
+        case 'function-exists':
+          return safeGGB.getObject(validation.functionName) !== null;
+        
+        default:
+          return true;
+      }
+    } catch (e) {
+      console.warn('验证失败:', e);
+      return false;
+    }
+  }
+
+  // ========== 任务完成/失败 ==========
+
+  taskSuccess() {
+    const task = this.currentTaskData;
+    const basePoints = task.points || 10;
+    
+    // 计算得分
+    let finalPoints = basePoints;
+    
+    // 尝试惩罚
+    if (this.attemptCount > 1) {
+      finalPoints *= Math.max(0.5, 1 - (this.attemptCount - 1) * 0.15);
+    }
+    
+    // 提示惩罚
+    if (this.hintsUsed > 0) {
+      finalPoints *= (1 - this.hintsUsed * 0.1);
+    }
+    
+    // 时间奖励（30 秒内完成）
+    const timeTaken = (Date.now() - this.taskStartTime) / 1000;
+    if (timeTaken < 30) {
+      finalPoints *= 1.2;
+    }
+    
+    finalPoints = Math.round(finalPoints);
+    
+    // 连击
+    this.comboCount++;
+    this.lastCompleteTime = Date.now();
+    
+    // 加分
+    this.addScore(finalPoints, true);
+    
+    // 显示反馈
+    this.showFeedback(`✓ 正确！+${finalPoints}分`, 'success');
+    
+    // 更新按钮
+    document.getElementById('check-btn').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'flex';
+    
+    // 播放音效（可选）
+    this.playSound('success');
+  }
+
+  taskFailure() {
+    const task = this.currentTaskData;
+    const feedback = document.getElementById('feedback-section');
+    
+    let message = '✗ 不对哦，再试试看';
+    
+    if (this.attemptCount >= 3) {
+      message = '✗ 已经尝试 3 次了，要不要看看提示？';
+    }
+    
+    this.showFeedback(message, 'error');
+    
+    // 重置连击
+    this.comboCount = 0;
+    
+    this.playSound('error');
+  }
+
+  nextTask() {
+    const tasks = this.currentLevelData.tasks || [];
+    const nextTaskIndex = this.currentTask;
+    
+    if (nextTaskIndex >= tasks.length) {
+      this.completeLevel();
+    } else {
+      this.loadTask(nextTaskIndex);
+    }
+  }
+
+  // ========== 关卡完成 ==========
+
+  completeLevel() {
+    const level = this.currentLevelData;
+    const tasks = level.tasks || [];
+    
+    // 计算星级
+    const totalPoints = tasks.reduce((sum, t) => sum + (t.points || 10), 0);
+    const percentage = this.userScore / (totalPoints * this.chapters.length * 5) * 100;
+    
+    let stars = 1;
+    if (percentage > 30) stars = 2;
+    if (percentage > 60) stars = 3;
+    
+    // 保存进度
+    if (!this.completedLevels.includes(this.currentLevel)) {
+      this.completedLevels.push(this.currentLevel);
+    }
+    this.levelStars[this.currentLevel] = Math.max(
+      this.levelStars[this.currentLevel] || 0,
+      stars
+    );
+    
+    this.saveProgress();
+    this.renderLevelList();
+    this.updateUserStats();
+    
+    // 显示完成模态框
+    this.showCompletionModal(stars, totalPoints);
+  }
+
+  showCompletionModal(stars, score) {
+    const modal = document.getElementById('completion-modal');
+    document.getElementById('modal-stars').textContent = '⭐'.repeat(stars);
+    document.getElementById('modal-score').textContent = `本关得分：${score}`;
+    document.getElementById('modal-message').textContent = this.getRandomEncouragement();
+    
+    modal.classList.add('show');
+    this.playSound('complete');
+  }
+
+  closeModal() {
+    document.getElementById('completion-modal').classList.remove('show');
+  }
+
+  getRandomEncouragement() {
+    const messages = [
+      '太棒了！继续加油！',
+      '干得漂亮！下一关在等你！',
+      '优秀的表现！保持这个节奏！',
+      '越来越厉害了！',
+      '完美！你就是 GeoGebra 大师！'
+    ];
+    return messages[Math.floor(Math.random() * messages.length)];
+  }
+
+  // ========== UI 辅助方法 ==========
+
+  showFeedback(message, type) {
+    const container = document.getElementById('feedback-section');
+    container.innerHTML = `<div class="feedback ${type}">${message}</div>`;
+  }
+
+  showScoreIncrease(points) {
+    const container = document.getElementById('user-score');
+    const increase = document.createElement('span');
+    increase.className = 'score-increase';
+    increase.textContent = `+${points}`;
+    increase.style.position = 'absolute';
+    increase.style.left = '50%';
+    increase.style.top = '-20px';
+    container.style.position = 'relative';
+    container.appendChild(increase);
+    
+    setTimeout(() => increase.remove(), 1000);
+  }
+
+  showComboEffect(count) {
+    const combo = document.createElement('div');
+    combo.className = 'combo-effect';
+    combo.textContent = `🔥 ${count}连击！`;
+    document.body.appendChild(combo);
+    
+    setTimeout(() => combo.remove(), 2500);
+  }
+
+  showLevelUpAnimation() {
+    const anim = document.getElementById('level-up-animation');
+    anim.style.display = 'block';
     
     setTimeout(() => {
-      notification.style.animation = 'fadeOut 0.5s';
-      setTimeout(() => notification.remove(), 500);
+      anim.style.display = 'none';
+    }, 2000);
+  }
+
+  showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.style.animation = 'toastSlide 0.3s ease reverse';
+      setTimeout(() => toast.remove(), 300);
     }, 3000);
   }
 
-  // 进度管理
-  loadProgress() {
-    const saved = localStorage.getItem('geogebra-tutorial-progress');
-    return saved ? JSON.parse(saved) : {
-      lessons: {},
-      tasks: {},
-      achievements: [],
-      totalScore: 0
-    };
+  playSound(type) {
+    // 可选：添加音效
+    // const audio = new Audio(`sounds/${type}.mp3`);
+    // audio.play().catch(() => {});
   }
 
-  saveProgress() {
-    localStorage.setItem('geogebra-tutorial-progress', JSON.stringify(this.userProgress));
-    this.updateStats();
-  }
-
-  saveTaskProgress(taskId, score) {
-    this.userProgress.tasks[taskId] = {
-      completed: true,
-      score: score,
-      completedAt: new Date().toISOString(),
-      attempts: this.attemptCount,
-      hints: this.hintsShown
-    };
-    this.userProgress.totalScore += score;
-    this.saveProgress();
-  }
-
-  saveLessonCompletion(lessonId) {
-    this.userProgress.lessons[lessonId] = {
-      completed: true,
-      completedAt: new Date().toISOString()
-    };
-    this.saveProgress();
-  }
-
-  isTaskCompleted(taskId) {
-    return this.userProgress.tasks[taskId]?.completed || false;
-  }
-
-  isLessonCompleted(lessonId) {
-    return this.userProgress.lessons[lessonId]?.completed || false;
-  }
-
-  // 更新统计
-  updateStats() {
-    const totalTasks = this.lessons.reduce((sum, lesson) => sum + lesson.tasks.length, 0);
-    const completedTasks = Object.keys(this.userProgress.tasks).length;
-    const completedLessons = Object.keys(this.userProgress.lessons).length;
-    const totalScore = this.userProgress.totalScore;
-    
-    document.getElementById('stat-total-tasks').textContent = totalTasks;
-    document.getElementById('stat-completed-tasks').textContent = completedTasks;
-    document.getElementById('stat-completed-lessons').textContent = completedLessons;
-    document.getElementById('stat-total-score').textContent = totalScore;
-    
-    // 显示用户等级
-    const rank = this.getUserRank();
-    const rankElement = document.getElementById('user-rank');
-    if (rankElement) {
-      rankElement.innerHTML = `🏅 ${rank.icon} ${rank.name}`;
-    }
-    
-    // 更新进度条
-    const percentage = Math.round((completedTasks / totalTasks) * 100);
-    document.getElementById('progress-fill').style.width = `${percentage}%`;
-    document.getElementById('progress-fill').textContent = `${percentage}%`;
-  }
-
-  // 事件监听
   setupEventListeners() {
-    document.getElementById('check-btn').onclick = () => this.checkAnswer();
-    
-    document.getElementById('close-modal').onclick = () => {
-      document.getElementById('completion-modal').classList.remove('active');
-      this.currentLesson = null;
-      this.renderLessonList();
-      document.getElementById('geogebra-container').innerHTML = 
-        '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;">选择一个课程开始学习</div>';
-    };
-    
-    document.getElementById('reset-progress').onclick = () => {
-      if (confirm('确定要重置所有进度吗？此操作不可恢复。')) {
-        localStorage.removeItem('geogebra-tutorial-progress');
-        this.userProgress = { lessons: {}, tasks: {}, achievements: [], totalScore: 0 };
-        this.updateStats();
-        this.renderLessonList();
-        alert('进度已重置');
+    // 可以在这里添加全局事件监听
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !document.getElementById('check-btn').disabled) {
+        this.checkAnswer();
       }
-    };
+    });
   }
 }
 
-// 初始化应用
-let tutorial;
-document.addEventListener('DOMContentLoaded', () => {
-  tutorial = new GeoGebraTutorial();
-});
+// 启动应用
+const app = new GeoGebraGame();

@@ -3,169 +3,823 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GeoGebra 互动教学平台 - 从零开始学 GeoGebra</title>
+  <title>GeoGebra 闯关学习 - 游戏化几何课堂</title>
   <link rel="stylesheet" href="css/style.css">
-  <meta name="description" content="互动式 GeoGebra 学习平台，通过实践任务逐步掌握 GeoGebra 的使用方法">
+  <meta name="description" content="游戏化 GeoGebra 学习平台，闯关式学习，边玩边学几何知识">
   <meta name="theme-color" content="#2c5aa0">
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA7AAAAOwBeShxvQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANCSURBVFiF7ZY9TsMwGIafOAWJgQuwMLFwANf//yccgIGBxMbEgMQJGJgYkPgRJCS2Vq1T/JGd2E5S0vUlTpz4fd7X3+dgGIZhGIZhGIZhGIZhGIZhGIZhGP+ACsR78B4f8Q5v8Aov8RyP8RCP8AAP0Kd9dNE+2qgPbdSHJurDd9RHG/Whe3TRPjpBH7qoD13Uhx7qQw/1oY/60Ed96KM+9FEfBqgPQ9SHIerDEPVhiPowQn0YoT6MUR/GqA8T1IcJ6sME9WGK+jBFfZiiPkxRH2aoDzPUhznqwxz1YYH6sEB9WKE+LFEflqgPK9SHNerDGvVhg/qwRX3Yoj7sUB/2qA8H1IcD6sMR9eGI+nBCfTihPpxRH86oDxfUhwvqwxX14Yr6cEN9uKM+3FEfHqgPT9SHJ+rDC/XhjfrwQX34oj78UB/+qA8D1IcR6sMY9WGC+jBFfZiiPkxRH+aoD3PUhwXqwxL1YYX6sER9WKE+rFEfNqgPW9SHHerDHvVhj/pwQH04oj6cUB/OqA9n1IcL6sMV9eGG+nBHfXigPjxRH56oDy/Why/qww/14Y/6MEB9GKE+jFEfJqgPU9SHKerDVPVhgfqwQn1Yoj6sUB/WqA9b1Icd6sMe9eGA+nBEfTihPpxRH86oDxfUhyvqwxX14Yb6cEd9eKA+PFEfnqgPL9SHN+rDB/Xhj/rwR30YoD6MUB/GqA8T1Icp6sMU9WGK+jBDfZijPixQH5aoDyvUhxXqwxr1YYv6sEN92KM+HFAfjqgPJ9SHM+rDGfXhgvpwRX24oj7cUB/uqA8P1Icn6sMT9eGF+vBGffigPvxRH/6oDwPUhxHqwxj1YYL6MEV9mKI+TFEfZqgPc9SHBerDEvVhhfqwQn1Yoz5sUR92qA971IcD6sMR9eGE+nBGfTijPlxQH66oD1fUhxvqwx314YH68ER9eKI+vFAf3qgPH9SHP+rDH/XhgPowQH0YoT6MUR8mqA9T1Icp6sMU9WGG+jBHezihPqxQH9aoD1vUhx3qwx714YD6cER9OKE+nFEfzqgPF9SHK+rDFfXhhvpwR314oD48UR+eqA8v1Ic36sMH9eGP+vBHfRigPoxQH8aoDxPUhynqwxT1YYr6MEN9mKM+LFAflqgPK9SHFfr/BvVhg/qwQX3Yoj7sUB/2qA8H1Icj6sMJ9eGM+nBGfbigPlxRH66oDzfUhzvqwwP14Yn68ER9eKE+vFEfPqgPf9SHP+rDAPVhhPowRn2YoD5MUR+mqA9T1IcZ6sMc9WGB+rBEfVihPqxRH7aoDzvUhz3qwwH14Yj6cEJ9OKM+nFEfLqgPV9SHK+rDDfXhjvrwQH14oj48UR9eqA9v1IcP6sMf9eGP+jBAfRihPoxRHyaoD1PUhynqwxT1YYb6MEf9H8MwDMMwDMMwDMMwDMMwDMMwDMMw/gJ/ADSqLX3F211AAAAAAElFTkSuQmCC">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📐</text></svg>">
+  <style>
+    /* 考试系统风格配色 */
+    :root {
+      --primary-color: #2c5aa0;
+      --primary-dark: #1e3d6f;
+      --primary-light: #4a7bc9;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --info-color: #17a2b8;
+      --bg-color: #f5f7fa;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+      --text-muted: #6c757d;
+      --border-color: #dee2e6;
+      --shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --shadow-lg: 0 4px 16px rgba(0,0,0,0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      overflow: hidden;
+    }
+
+    /* 顶部用户信息栏 */
+    .header-bar {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+      z-index: 100;
+      position: relative;
+    }
+
+    .header-bar h1 {
+      font-size: 1.4em;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-stats {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .stat-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.15);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.9em;
+    }
+
+    .stat-badge .icon {
+      font-size: 1.2em;
+    }
+
+    .stat-badge .value {
+      font-weight: 600;
+      min-width: 40px;
+    }
+
+    .level-badge {
+      background: linear-gradient(135deg, #ffd700, #ff8c00);
+      color: #000;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(255,215,0,0.4);
+    }
+
+    /* 主容器 */
+    .container {
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      grid-template-rows: 1fr;
+      height: calc(100vh - 60px);
+      gap: 0;
+    }
+
+    /* 左侧关卡面板 */
+    .level-panel {
+      background: var(--card-bg);
+      border-right: 1px solid var(--border-color);
+      overflow-y: auto;
+      padding: 15px;
+    }
+
+    .panel-title {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chapter-section {
+      margin-bottom: 20px;
+    }
+
+    .chapter-title {
+      font-size: 0.95em;
+      font-weight: 600;
+      color: var(--text-color);
+      background: var(--bg-color);
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .level-list {
+      list-style: none;
+    }
+
+    .level-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      background: var(--bg-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+
+    .level-item:hover {
+      background: var(--primary-light);
+      color: white;
+      transform: translateX(4px);
+    }
+
+    .level-item.active {
+      border-color: var(--primary-color);
+      background: var(--primary-light);
+      color: white;
+    }
+
+    .level-item.locked {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #e9ecef;
+    }
+
+    .level-item.locked:hover {
+      transform: none;
+      background: #e9ecef;
+    }
+
+    .level-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.85em;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .level-item.locked .level-number {
+      background: #adb5bd;
+    }
+
+    .level-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .level-name {
+      font-size: 0.9em;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .level-stars {
+      font-size: 0.75em;
+      color: #ffc107;
+      margin-top: 2px;
+    }
+
+    .level-item.locked .level-stars {
+      color: #adb5bd;
+    }
+
+    .lock-icon {
+      font-size: 1em;
+      color: #adb5bd;
+    }
+
+    /* 中间 GeoGebra 区域 */
+    .geogebra-area {
+      background: #fff;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .geogebra-header {
+      background: var(--bg-color);
+      padding: 10px 15px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .geogebra-title {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .geogebra-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .ggb-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85em;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .ggb-btn-primary {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .ggb-btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .ggb-btn-secondary {
+      background: var(--bg-color);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+    }
+
+    .ggb-btn-secondary:hover {
+      background: var(--border-color);
+    }
+
+    #geogebra-container {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+    }
+
+    .ggb-loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-color);
+      z-index: 10;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid var(--border-color);
+      border-top-color: var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      margin-top: 15px;
+      color: var(--text-muted);
+      font-size: 0.95em;
+    }
+
+    /* 右侧任务面板 */
+    .task-panel {
+      background: var(--card-bg);
+      border-left: 1px solid var(--border-color);
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .task-header {
+      margin-bottom: 20px;
+    }
+
+    .task-chapter {
+      font-size: 0.85em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+    }
+
+    .task-title {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+
+    .task-progress {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9em;
+      color: var(--text-muted);
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .progress-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border-color);
+      transition: all 0.3s;
+    }
+
+    .progress-dot.active {
+      background: var(--primary-color);
+      transform: scale(1.2);
+    }
+
+    .progress-dot.completed {
+      background: var(--success-color);
+    }
+
+    .task-instruction {
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary-color);
+      margin-bottom: 20px;
+      font-size: 0.95em;
+      line-height: 1.7;
+    }
+
+    .task-instruction strong {
+      color: var(--primary-color);
+    }
+
+    .feedback-section {
+      margin-bottom: 20px;
+      min-height: 60px;
+    }
+
+    .feedback {
+      padding: 12px 15px;
+      border-radius: 8px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .feedback.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .feedback.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .feedback.hint {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+
+    .hint-section {
+      background: var(--bg-color);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .hint-title {
+      font-size: 0.95em;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hint-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hint-btn {
+      padding: 10px 15px;
+      border: 2px solid var(--border-color);
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+      font-weight: 500;
+      transition: all 0.2s;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hint-btn:hover:not(:disabled) {
+      border-color: var(--primary-color);
+      background: var(--bg-color);
+    }
+
+    .hint-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: var(--bg-color);
+    }
+
+    .hint-btn.used {
+      border-color: var(--success-color);
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .hint-cost {
+      margin-left: auto;
+      font-size: 0.85em;
+      color: var(--warning-color);
+      font-weight: 600;
+    }
+
+    .action-buttons {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 14px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 600;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      box-shadow: 0 4px 12px rgba(44,90,160,0.3);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(44,90,160,0.4);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success-color), #1e7e34);
+      color: white;
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, var(--warning-color), #e0a800);
+      color: #000;
+    }
+
+    /* 模态框 */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      animation: scaleIn 0.3s ease;
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-title {
+      font-size: 1.8em;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+
+    .modal-stars {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+
+    .modal-score {
+      font-size: 1.5em;
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .modal-message {
+      font-size: 1.1em;
+      color: var(--text-muted);
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    /* 升级动画 */
+    .level-up-animation {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2000;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .level-up-text {
+      font-size: 3em;
+      font-weight: 700;
+      color: #ffd700;
+      text-shadow: 0 4px 16px rgba(255,215,0,0.5);
+      animation: levelUpBounce 0.8s ease;
+    }
+
+    @keyframes levelUpBounce {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* 滚动条样式 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-color);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
+
+    /* 响应式 */
+    @media (max-width: 1200px) {
+      .container {
+        grid-template-columns: 240px 1fr 280px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 400px auto;
+        height: auto;
+        overflow-y: auto;
+      }
+
+      .level-panel,
+      .task-panel {
+        max-height: 300px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
-    <header>
-      <h1>📐 GeoGebra 互动教学平台</h1>
-      <p>通过实践任务，循序渐进地掌握 GeoGebra 的使用方法</p>
-      <p style="margin-top: 10px; font-size: 0.9em; color: #666; font-style: italic;">本网站由田老师委托贾维斯·兴创办</p>
-    </header>
-
-    <!-- Main Content -->
-    <div class="main-content">
-      <!-- Left Sidebar - Lesson Navigation -->
-      <aside class="sidebar">
-        <h2>📚 课程列表</h2>
-        <ul class="lesson-list" id="lesson-list">
-          <li class="lesson-item">正在加载课程...</li>
-        </ul>
-        
-        <!-- Progress Stats -->
-        <div class="stats-panel">
-          <h3 style="margin-bottom: 15px; color: var(--primary-color);">📊 学习进度</h3>
-          <div class="stat-item">
-            <span class="stat-label">已完成课程</span>
-            <span class="stat-value" id="stat-completed-lessons">0</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">已完成任务</span>
-            <span class="stat-value" id="stat-completed-tasks">0 / <span id="stat-total-tasks">0</span></span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">总得分</span>
-            <span class="stat-value" id="stat-total-score">0</span>
-          </div>
-          
-          <!-- User Rank -->
-          <div class="user-rank" id="user-rank">
-            🏅  初学者
-          </div>
-          
-          <div class="progress-container" style="margin-top: 20px;">
-            <div class="progress-bar">
-              <div class="progress-fill" id="progress-fill" style="width: 0%;">0%</div>
-            </div>
-          </div>
-          
-          <button class="btn btn-warning" id="reset-progress" style="width: 100%; margin-top: 15px; font-size: 0.9em;">
-            🔄 重置进度
-          </button>
-        </div>
-      </aside>
-
-      <!-- Center - GeoGebra Canvas -->
-      <main class="geogebra-area">
-        <div id="geogebra-container" style="display:flex;align-items:center;justify-content:center;height:600px;color:#666;">
-          <div>
-            <p style="font-size: 1.2em; margin-bottom: 10px;">👈 从左侧选择一个课程开始学习</p>
-            <p style="font-size: 0.9em; color: #999;">GeoGebra 画布将在选择课程后加载</p>
-          </div>
-        </div>
-      </main>
-
-      <!-- Right Sidebar - Task Panel -->
-      <aside class="task-panel">
-        <div class="task-number" id="task-number">未选择课程</div>
-        <h2 id="task-title">选择课程开始</h2>
-        
-        <div class="task-instruction" id="task-instruction">
-          从左侧课程列表中选择一个课程，开始你的 GeoGebra 学习之旅！
-        </div>
-        
-        <!-- Attempt Counter -->
-        <div class="attempt-counter" id="attempt-counter" style="display: none;">
-          ⚠️ 当前尝试次数：0 | 使用提示会降低得分
-        </div>
-        
-        <!-- Feedback -->
-        <div id="feedback"></div>
-        
-        <!-- Hint Section -->
-        <div class="hint-section" id="hint-section">
-          <h3>💡 需要提示吗？</h3>
-          <p style="color: #666; font-size: 0.9em;">完成每个任务后，你可以获取提示来帮助自己</p>
-        </div>
-        
-        <!-- Action Buttons -->
-        <div style="margin-top: 25px;">
-          <button class="btn btn-primary" id="check-btn" disabled style="width: 100%;">
-            ✓ 检查答案
-          </button>
-        </div>
-        
-        <!-- Task Navigation -->
-        <div class="task-navigation" id="task-navigation">
-          <!-- Dynamically populated -->
-        </div>
-        
-        <!-- Instructions -->
-        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-          <h3 style="color: var(--primary-color); margin-bottom: 10px;">📖 使用说明</h3>
-          <ol style="padding-left: 20px; line-height: 1.8; color: #555;">
-            <li>从左侧选择一个课程</li>
-            <li>阅读右侧的任务说明</li>
-            <li>在 GeoGebra 画布中完成任务</li>
-            <li>点击「检查答案」验证结果</li>
-            <li>遇到困难可以使用提示功能</li>
-            <li>完成后进入下一题</li>
-          </ol>
-        </div>
-      </aside>
+  <!-- 顶部用户信息栏 -->
+  <header class="header-bar">
+    <h1>
+      <span>📐</span>
+      <span>GeoGebra 闯关学习</span>
+    </h1>
+    <div class="user-stats">
+      <div class="level-badge" id="user-level">
+        <span class="icon">🏅</span>
+        <span class="level-name">初学者</span>
+      </div>
+      <div class="stat-badge">
+        <span class="icon">⭐</span>
+        <span class="value" id="user-score">0</span>
+        <span>积分</span>
+      </div>
+      <div class="stat-badge">
+        <span class="icon">📚</span>
+        <span class="value" id="user-progress">0/20</span>
+        <span>关卡</span>
+      </div>
     </div>
+  </header>
+
+  <!-- 主容器 -->
+  <div class="container">
+    <!-- 左侧关卡面板 -->
+    <aside class="level-panel">
+      <div class="panel-title">
+        <span>🗺️</span>
+        <span>闯关地图</span>
+      </div>
+      <div id="level-list">
+        <div style="text-align:center;padding:40px;color:#999;">
+          <div class="spinner" style="width:30px;height:30px;margin:0 auto 15px;"></div>
+          <div>正在加载关卡...</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 中间 GeoGebra 区域 -->
+    <main class="geogebra-area">
+      <div class="geogebra-header">
+        <div class="geogebra-title" id="current-level-title">选择关卡开始</div>
+        <div class="geogebra-actions">
+          <button class="ggb-btn ggb-btn-secondary" onclick="app.resetGeoGebra()" title="重置画布">
+            🔄 重置
+          </button>
+          <button class="ggb-btn ggb-btn-secondary" onclick="app.toggleFullscreen()" title="全屏">
+            ⛶ 全屏
+          </button>
+        </div>
+      </div>
+      <div id="geogebra-container">
+        <div class="ggb-loading">
+          <div class="spinner"></div>
+          <div class="loading-text">选择左侧关卡开始学习</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 右侧任务面板 -->
+    <aside class="task-panel">
+      <div class="task-header" id="task-header" style="display:none;">
+        <div class="task-chapter" id="task-chapter">第一章</div>
+        <div class="task-title" id="task-title">任务标题</div>
+        <div class="task-progress">
+          <div class="progress-dots" id="progress-dots"></div>
+          <span id="task-progress-text">1/3</span>
+        </div>
+      </div>
+
+      <div class="task-instruction" id="task-instruction" style="display:none;">
+        任务说明内容
+      </div>
+
+      <div class="feedback-section" id="feedback-section"></div>
+
+      <div class="hint-section" id="hint-section" style="display:none;">
+        <div class="hint-title">💡 提示</div>
+        <div class="hint-buttons" id="hint-buttons"></div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn btn-primary" id="check-btn" disabled onclick="app.checkAnswer()">
+          ✓ 检查答案
+        </button>
+        <button class="btn btn-success" id="next-btn" style="display:none;" onclick="app.nextTask()">
+          ➜ 下一关
+        </button>
+      </div>
+    </aside>
   </div>
 
-  <!-- Completion Modal -->
+  <!-- 完成模态框 -->
   <div class="modal" id="completion-modal">
     <div class="modal-content">
-      <h2 id="completion-title">🎉 课程完成！</h2>
-      <div class="stars" id="completion-stars">⭐⭐⭐</div>
-      <p id="completion-score" style="font-size: 1.5em; color: var(--primary-color); font-weight: bold;">
-        得分：0 / 0 (0%)
-      </p>
-      <p id="completion-message">太棒了！你已经掌握了本课程的内容。</p>
-      <button class="btn btn-primary" id="close-modal">
-        ✓ 完成
+      <div class="modal-title" id="modal-title">🎉 关卡完成！</div>
+      <div class="modal-stars" id="modal-stars">⭐⭐⭐</div>
+      <div class="modal-score" id="modal-score">得分：100</div>
+      <div class="modal-message" id="modal-message">太棒了！继续加油！</div>
+      <button class="btn btn-primary" onclick="app.closeModal()" style="margin:0 auto;">
+        ✓ 继续闯关
       </button>
     </div>
   </div>
 
+  <!-- 升级动画 -->
+  <div class="level-up-animation" id="level-up-animation" style="display:none;">
+    <div class="level-up-text">🎉 升级啦！</div>
+  </div>
+
   <!-- JavaScript -->
-  <!-- GeoGebra 安全 API - 在 app.js 之前加载 -->
   <script src="js/geogebra-safe-api.js"></script>
-  
   <script src="js/app.js"></script>
-  
-  <!-- Service Worker for Offline Support -->
+
   <script>
-    // 注册 Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(registration => {
-            console.log('ServiceWorker registration successful:', registration.scope);
-          })
-          .catch(err => {
-            console.log('ServiceWorker registration failed:', err);
-          });
-      });
-    }
-    
     // 离线检测
     window.addEventListener('online', () => {
       console.log('网络已连接');
     });
-    
+
     window.addEventListener('offline', () => {
       console.log('网络已断开 - 离线模式可用');
-      alert('⚠️ 您已离线，已加载缓存内容。GeoGebra 画布需要联网才能使用。');
     });
   </script>
 </body>

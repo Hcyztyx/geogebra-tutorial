@@ -1,591 +1,358 @@
-/* GeoGebra 互动教学网站 - 样式表 */
+/**
+ * GeoGebra 闯关学习网站 - 样式文件
+ * 考试系统风格 - 简洁清晰
+ */
 
-:root {
-  --primary-color: #2c5aa0;
-  --primary-dark: #1e3f72;
-  --secondary-color: #4a90d9;
-  --success-color: #28a745;
-  --warning-color: #ffc107;
-  --danger-color: #dc3545;
-  --light-bg: #f8f9fa;
-  --dark-text: #333;
-  --border-color: #dee2e6;
-  --shadow: 0 2px 10px rgba(0,0,0,0.1);
+/* 已在内联样式中定义主要样式，此文件用于补充和扩展 */
+
+/* GeoGebra 容器覆盖样式 */
+#geogebra-container .geogebra-container {
+  width: 100% !important;
+  height: 100% !important;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* 任务完成动画 */
+.task-complete {
+  animation: pulse 0.5s ease;
 }
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  color: var(--dark-text);
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
 }
 
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-/* Header */
-header {
-  background: white;
-  padding: 20px 30px;
-  border-radius: 10px;
-  box-shadow: var(--shadow);
-  margin-bottom: 20px;
-}
-
-header h1 {
-  color: var(--primary-color);
-  font-size: 2em;
-  margin-bottom: 10px;
-}
-
-header p {
-  color: #666;
-  font-size: 1.1em;
-}
-
-/* Main Layout */
-.main-content {
-  display: grid;
-  grid-template-columns: 300px 1fr 300px;
-  gap: 20px;
-  min-height: calc(100vh - 200px);
-}
-
-/* Sidebar - Lesson Navigation */
-.sidebar {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: var(--shadow);
-  height: fit-content;
-}
-
-.sidebar h2 {
-  color: var(--primary-color);
-  margin-bottom: 15px;
-  font-size: 1.3em;
-  border-bottom: 2px solid var(--primary-color);
-  padding-bottom: 10px;
-}
-
-.lesson-list {
-  list-style: none;
-}
-
-.lesson-item {
-  padding: 12px 15px;
-  margin-bottom: 8px;
-  background: var(--light-bg);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s;
-  border-left: 4px solid transparent;
-}
-
-.lesson-item:hover {
-  background: #e9ecef;
-  transform: translateX(5px);
-}
-
-.lesson-item.active {
-  background: #e3f2fd;
-  border-left-color: var(--primary-color);
-  font-weight: bold;
-}
-
-.lesson-item.completed {
-  border-left-color: var(--success-color);
-  background: #e8f5e9;
-}
-
-.lesson-item .difficulty {
-  font-size: 0.8em;
-  padding: 2px 8px;
+/* 连击效果 */
+.combo-effect {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  color: #000;
+  padding: 15px 25px;
   border-radius: 12px;
-  margin-left: 8px;
+  font-weight: 700;
+  font-size: 1.2em;
+  box-shadow: 0 4px 16px rgba(255,215,0,0.4);
+  z-index: 1500;
+  animation: comboSlide 0.5s ease, comboFade 2s ease 1s forwards;
 }
 
-.difficulty.beginner { background: #c8e6c9; color: #2e7d32; }
-.difficulty.intermediate { background: #fff9c4; color: #f57f17; }
-.difficulty.advanced { background: #ffcdd2; color: #c62828; }
-
-/* GeoGebra Canvas Area */
-.geogebra-area {
-  background: white;
-  border-radius: 10px;
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+@keyframes comboSlide {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
-#geogebra-container {
-  flex: 1;
-  min-height: 600px;
+@keyframes comboFade {
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 }
 
-/* Task Panel */
-.task-panel {
-  background: white;
-  border-radius: 10px;
-  padding: 25px;
-  box-shadow: var(--shadow);
-}
-
-.task-panel h2 {
-  color: var(--primary-color);
-  margin-bottom: 15px;
+/* 分数增加动画 */
+.score-increase {
+  position: absolute;
+  color: var(--success-color);
+  font-weight: 700;
   font-size: 1.5em;
+  animation: scoreFloat 1s ease forwards;
+  pointer-events: none;
 }
 
-.task-instruction {
-  background: #f0f7ff;
-  padding: 20px;
-  border-radius: 8px;
-  border-left: 4px solid var(--primary-color);
+@keyframes scoreFloat {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50px) scale(1.5);
+  }
+}
+
+/* 工具提示 */
+.tooltip {
+  position: relative;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+  margin-bottom: 8px;
+}
+
+.tooltip:hover::after {
+  opacity: 1;
+}
+
+/* 加载骨架屏 */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.empty-state .icon {
+  font-size: 4em;
   margin-bottom: 20px;
-  font-size: 1.1em;
+  opacity: 0.5;
+}
+
+.empty-state .title {
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text-color);
+}
+
+.empty-state .desc {
+  font-size: 0.95em;
   line-height: 1.6;
 }
 
-.task-instruction strong {
-  color: var(--primary-dark);
-}
-
-/* Buttons */
-.btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1em;
-  font-weight: 600;
-  transition: all 0.3s;
+/* 成就徽章 */
+.achievement-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-}
-
-.btn-primary {
-  background: var(--primary-color);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(44, 90, 160, 0.3);
-}
-
-.btn-success {
-  background: var(--success-color);
-  color: white;
-}
-
-.btn-warning {
-  background: var(--warning-color);
-  color: #333;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Hint Section */
-.hint-section {
-  margin-top: 20px;
-  padding: 15px;
-  background: #fff8e1;
-  border-radius: 8px;
-  border: 2px dashed var(--warning-color);
-}
-
-.hint-section h3 {
-  color: #f57f17;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.hint {
-  background: white;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 6px;
-  border-left: 3px solid var(--warning-color);
-  animation: fadeIn 0.5s;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Feedback */
-.feedback {
-  padding: 15px;
-  border-radius: 8px;
-  margin: 15px 0;
+  gap: 6px;
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 20px;
   font-weight: 600;
-  animation: slideIn 0.5s;
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-.feedback.success {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.feedback.error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-/* Progress Bar */
-.progress-container {
-  margin: 20px 0;
-}
-
-.progress-bar {
-  background: #e9ecef;
-  border-radius: 10px;
-  height: 20px;
-  overflow: hidden;
-  margin-bottom: 10px;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--success-color), #28a745);
-  transition: width 0.5s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 0.8em;
-  font-weight: bold;
-}
-
-/* Stats Panel */
-.stats-panel {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: var(--shadow);
-  margin-top: 20px;
-}
-
-.stat-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.stat-item:last-child {
-  border-bottom: none;
-}
-
-.stat-label {
-  color: #666;
-}
-
-.stat-value {
-  font-weight: bold;
-  color: var(--primary-color);
-}
-
-/* Modal */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal.active {
-  display: flex;
-}
-
-.modal-content {
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  max-width: 500px;
-  text-align: center;
-  animation: zoomIn 0.3s;
-}
-
-@keyframes zoomIn {
-  from { transform: scale(0.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-.modal-content h2 {
-  color: var(--success-color);
-  font-size: 2em;
-  margin-bottom: 20px;
-}
-
-.modal-content p {
-  font-size: 1.2em;
-  margin-bottom: 30px;
-}
-
-/* Responsive */
-@media (max-width: 1200px) {
-  .main-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .sidebar, .task-panel {
-    margin-bottom: 20px;
-  }
-}
-
-/* Loading Spinner */
-.spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid var(--primary-color);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin: 20px auto;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Task Navigation */
-.task-navigation {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 2px solid var(--border-color);
-}
-
-.task-number {
   font-size: 0.9em;
-  color: #666;
-  margin-bottom: 10px;
+  box-shadow: 0 4px 12px rgba(255,215,0,0.3);
 }
 
-/* Attempt Counter */
-.attempt-counter {
-  background: #fff3cd;
-  padding: 10px 15px;
-  border-radius: 6px;
-  margin: 15px 0;
-  color: #856404;
-  font-weight: 600;
-}
-
-/* Achievement Notification */
-@keyframes slideInRight {
-  from { transform: translateX(400px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0; transform: translateX(400px); }
-}
-
-.achievement-notification {
-  animation: slideInRight 0.5s ease-out;
-}
-
-/* User Rank Display */
-.user-rank {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 10px 15px;
-  border-radius: 8px;
-  margin: 15px 0;
-  font-weight: bold;
-  text-align: center;
-}
-
-/* Score Display */
-.score-display {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: var(--primary-color);
-  margin: 10px 0;
-}
-
-/* Challenge Badge */
-.challenge-badge {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: white;
-  padding: 5px 12px;
-  border-radius: 15px;
-  font-size: 0.8em;
-  font-weight: bold;
-  margin-left: 10px;
-}
-
-/* Progress Bar Enhanced */
-.progress-fill {
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-  transition: width 0.5s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 0.8em;
-  font-weight: bold;
-  position: relative;
+/* 进度条动画 */
+.progress-bar {
+  background: var(--border-color);
+  border-radius: 10px;
+  height: 10px;
   overflow: hidden;
 }
 
-.progress-fill::after {
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+  border-radius: 10px;
+  transition: width 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  font-size: 0.75em;
+  color: white;
+  font-weight: 600;
+}
+
+/* 按钮加载状态 */
+.btn-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.btn-loading::after {
   content: '';
   position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-top: -8px;
+  margin-left: -8px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* 通知 toast */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 3000;
+  animation: toastSlide 0.3s ease;
+  max-width: 350px;
+}
+
+@keyframes toastSlide {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast.success {
+  border-left: 4px solid var(--success-color);
+}
+
+.toast.error {
+  border-left: 4px solid var(--danger-color);
+}
+
+.toast.warning {
+  border-left: 4px solid var(--warning-color);
+}
+
+.toast.info {
+  border-left: 4px solid var(--info-color);
+}
+
+/* 确认对话框覆盖 */
+.modal-overlay {
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255,255,255,0.3),
-    transparent
-  );
-  animation: shimmer 2s infinite;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
 }
 
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-/* Task Points Display */
-.task-points {
-  background: #ff9800;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 15px;
-  font-size: 0.9em;
-  font-weight: bold;
-  display: inline-block;
-  margin: 5px 0;
-}
-
-/* Completion Modal Enhanced */
-.modal-content {
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  max-width: 500px;
-  text-align: center;
-  animation: zoomIn 0.3s;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-}
-
-.modal-content .stars {
-  font-size: 3em;
-  margin: 20px 0;
-}
-
-/* Lesson Item Stars */
-.lesson-stars {
-  color: #ffc107;
-  font-size: 0.9em;
-  margin-top: 5px;
-}
-
-/* Difficulty Badge */
-.difficulty {
-  font-size: 0.75em;
-  padding: 3px 10px;
-  border-radius: 12px;
-  margin-left: 8px;
-  font-weight: bold;
-}
-
-.difficulty.beginner { 
-  background: linear-gradient(135deg, #c8e6c9 0%, #81c784 100%); 
-  color: #2e7d32; 
-}
-
-.difficulty.intermediate { 
-  background: linear-gradient(135deg, #fff9c4 0%, #ffd54f 100%); 
-  color: #f57f17; 
-}
-
-.difficulty.advanced { 
-  background: linear-gradient(135deg, #ffcdd2 0%, #e57373 100%); 
-  color: #c62828; 
-}
-
-.difficulty.expert { 
-  background: linear-gradient(135deg, #e1bee7 0%, #ba68c8 100%); 
-  color: #6a1b9a; 
-}
-
-/* Stats Panel Enhanced */
-.stats-panel {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: var(--shadow);
-  margin-top: 20px;
-}
-
-.stat-item {
+.modal-overlay.show {
   display: flex;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border-color);
-  transition: background 0.3s;
 }
 
-.stat-item:hover {
-  background: rgba(102, 126, 234, 0.1);
-  padding-left: 10px;
-  border-radius: 5px;
+/* 快捷键提示 */
+.shortcut-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-color);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: monospace;
+  border: 1px solid var(--border-color);
 }
 
-.stat-item:last-child {
-  border-bottom: none;
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .header-bar {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+  }
+
+  .user-stats {
+    gap: 10px;
+  }
+
+  .stat-badge {
+    padding: 4px 8px;
+    font-size: 0.85em;
+  }
+
+  .container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 350px auto;
+  }
+
+  .level-panel,
+  .task-panel {
+    max-height: none;
+  }
+
+  .modal-content {
+    padding: 30px 20px;
+    width: 95%;
+  }
+
+  .modal-title {
+    font-size: 1.5em;
+  }
+
+  .modal-stars {
+    font-size: 2.5em;
+  }
 }
 
-.stat-label {
-  color: #666;
-  font-weight: 500;
+/* 打印样式 */
+@media print {
+  .header-bar,
+  .level-panel,
+  .task-panel,
+  .geogebra-actions {
+    display: none !important;
+  }
+
+  .container {
+    display: block;
+  }
+
+  .geogebra-area {
+    height: auto;
+  }
 }
 
-.stat-value {
-  font-weight: bold;
-  color: var(--primary-color);
-  font-size: 1.1em;
+/* 暗色模式支持（可选） */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #1a1a2e;
+    --card-bg: #16213e;
+    --text-color: #eaeaea;
+    --text-muted: #a0a0a0;
+    --border-color: #2d2d44;
+  }
+
+  .task-instruction {
+    background: linear-gradient(135deg, #16213e, #1a1a2e);
+  }
+
+  .hint-section {
+    background: #1a1a2e;
+  }
+
+  .hint-btn {
+    background: #16213e;
+    color: var(--text-color);
+  }
 }
