@@ -175,15 +175,27 @@ class GeoGebraTutorial {
       showResetIcon: false,
       showFullscreenButton: true,
       useBrowserForJS: true,
+      // 禁用所有错误提示
       showErrorDialog: false,
-      errorDialogHandler: () => {}
+      errorDialogHandler: () => {},
+      showLogging: false,
+      onError: (e) => {
+        console.log('GeoGebra error caught and suppressed:', e);
+      }
     };
 
     const script = document.createElement('script');
     script.src = 'https://www.geogebra.org/apps/deployggb.js';
     script.onload = () => {
-      const applet = new GGBApplet(parameters, '6.0');
-      applet.inject('geogebra-container');
+      try {
+        const applet = new GGBApplet(parameters, '6.0');
+        applet.inject('geogebra-container');
+      } catch (error) {
+        console.error('Failed to inject GeoGebra:', error);
+      }
+    };
+    script.onerror = (error) => {
+      console.error('Failed to load GeoGebra script:', error);
     };
     document.head.appendChild(script);
   }

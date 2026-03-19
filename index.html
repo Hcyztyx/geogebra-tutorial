@@ -138,6 +138,29 @@
   </div>
 
   <!-- JavaScript -->
+  <!-- GeoGebra 错误拦截器 - 在 app.js 之前加载 -->
+  <script>
+    // 拦截 GeoGebra 的错误弹窗
+    window.onerror = function(message, source, lineno, colno, error) {
+      // 如果是 GeoGebra 相关的错误，静默处理
+      if (source && source.includes('geogebra')) {
+        console.log('GeoGebra error suppressed:', message);
+        return true; // 阻止默认错误处理
+      }
+      return false;
+    };
+    
+    // 覆盖 alert 函数，防止 GeoGebra 弹出错误
+    const originalAlert = window.alert;
+    window.alert = function(message) {
+      if (message && message.includes('Error')) {
+        console.log('GeoGebra alert suppressed:', message);
+        return;
+      }
+      originalAlert.call(this, message);
+    };
+  </script>
+  
   <script src="js/app.js"></script>
   
   <!-- Service Worker for Offline Support -->
