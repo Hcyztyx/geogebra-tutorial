@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoGebra 闯关学习网站 - 访问入口</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 50px;
+      max-width: 700px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    h1 {
+      font-size: 2em;
+      color: #2c5aa0;
+      margin-bottom: 15px;
+    }
+    .subtitle {
+      font-size: 1.1em;
+      color: #666;
+      margin-bottom: 30px;
+    }
+    .status {
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+    .status.ready {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status.deploying {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .access-card {
+      background: linear-gradient(135deg, #2c5aa0, #4a7bc9);
+      color: white;
+      padding: 30px;
+      border-radius: 15px;
+      margin: 30px 0;
+      box-shadow: 0 10px 30px rgba(44,90,160,0.3);
+    }
+    .access-card h2 {
+      font-size: 1.5em;
+      margin-bottom: 15px;
+    }
+    .access-link {
+      background: white;
+      color: #2c5aa0;
+      padding: 15px 25px;
+      border-radius: 10px;
+      font-size: 1.2em;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      margin: 15px 0;
+      transition: all 0.3s;
+      word-break: break-all;
+    }
+    .access-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(255,255,255,0.3);
+    }
+    .features {
+      text-align: left;
+      margin: 30px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+    .features h3 {
+      color: #2c5aa0;
+      margin-bottom: 15px;
+    }
+    .features ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .features li {
+      padding: 8px 0;
+      padding-left: 25px;
+      position: relative;
+      color: #555;
+    }
+    .features li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #28a745;
+      font-weight: 700;
+    }
+    .qr-section {
+      margin: 30px 0;
+      padding: 20px;
+      background: #fff;
+      border: 2px dashed #dee2e6;
+      border-radius: 10px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 30px;
+      background: #28a745;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      margin: 10px 5px;
+      transition: all 0.3s;
+    }
+    .btn:hover {
+      background: #218838;
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      background: #6c757d;
+    }
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+    .note {
+      margin-top: 20px;
+      padding: 15px;
+      background: #e7f3ff;
+      border-left: 4px solid #2c5aa0;
+      border-radius: 5px;
+      text-align: left;
+      font-size: 0.95em;
+      color: #555;
+    }
+    .footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #dee2e6;
+      color: #999;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎮 GeoGebra 闯关学习网站</h1>
+    <p class="subtitle">游戏化几何课堂 · 边玩边学</p>
+    
+    <div class="status ready">✅ 网站已准备就绪</div>
+    
+    <div class="access-card">
+      <h2>🚀 立即访问</h2>
+      <p>点击下方链接开始学习</p>
+      <a href="https://geogebra-tutorial-dov9.vercel.app" class="access-link" target="_blank">
+        https://geogebra-tutorial-dov9.vercel.app
+      </a>
+      <div style="margin-top: 15px;">
+        <a href="https://geogebra-tutorial-dov9.vercel.app" class="btn" target="_blank">
+          🎯 进入网站
+        </a>
+        <a href="https://github.com/Hcyztyx/geogebra-tutorial" class="btn btn-secondary" target="_blank">
+          📦 GitHub 仓库
+        </a>
+      </div>
+    </div>
+    
+    <div class="features">
+      <h3>📚 网站特色</h3>
+      <ul>
+        <li>4 大章节，16 个关卡，50+ 任务</li>
+        <li>游戏化学习：积分、等级、连击系统</li>
+        <li>纯中文界面，考试系统风格</li>
+        <li>实时提示和反馈</li>
+        <li>进度自动保存，随时继续学习</li>
+        <li>兼容 GeoGebra 5 和 6</li>
+        <li>无需安装，打开网页即用</li>
+      </ul>
+    </div>
+    
+    <div class="qr-section">
+      <p style="color: #666; margin-bottom: 10px;">📱 手机扫码访问</p>
+      <div style="font-size: 0.9em; color: #999;">
+        使用手机浏览器扫描二维码即可在移动设备上学习
+      </div>
+    </div>
+    
+    <div class="note">
+      <strong>💡 使用提示：</strong>
+      <ul style="margin-top: 10px; padding-left: 20px; line-height: 1.8;">
+        <li>建议用 Chrome、Edge 或 Firefox 浏览器访问</li>
+        <li>首次加载需要 3-5 秒，请耐心等待</li>
+        <li>完成关卡后会自动解锁下一关</li>
+        <li>积分和进度会自动保存</li>
+        <li>如遇问题，刷新页面或清除浏览器缓存</li>
+      </ul>
+    </div>
+    
+    <div class="footer">
+      <p>本网站由田老师委托贾维斯·兴 创办</p>
+      <p style="margin-top: 5px;">版本 v3.0 · 2026 年 3 月更新</p>
+    </div>
+  </div>
+</body>
+</html>
